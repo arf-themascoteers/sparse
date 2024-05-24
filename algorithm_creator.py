@@ -10,6 +10,7 @@ from algorithms.algorithm_scnn import AlgorithmSCNN
 from algorithms.algorithm_sfc import AlgorithmSFC
 from algorithms.algorithm_nsfc import AlgorithmNSFC
 from algorithms.algorithm_zhangfc import AlgorithmZhangFC
+from algorithms.algorithm_ns import AlgorithmNS
 
 
 class AlgorithmCreator:
@@ -28,7 +29,8 @@ class AlgorithmCreator:
             "scnn": AlgorithmSCNN,
             "sfc": AlgorithmSFC,
             "nsfc": AlgorithmNSFC,
-            "zhangfc": AlgorithmZhangFC
+            "zhangfc": AlgorithmZhangFC,
+            "ns": AlgorithmNS
         }
 
         if name not in algorithms:
