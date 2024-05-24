@@ -12,6 +12,7 @@ from algorithms.algorithm_nsfc import AlgorithmNSFC
 from algorithms.algorithm_zhangfc import AlgorithmZhangFC
 from algorithms.algorithm_ns import AlgorithmNS
 from algorithms.algorithm_sig import AlgorithmSig
+from algorithms.algorithm_sigfc import AlgorithmSigFC
 from algorithms.algorithm_lsig import AlgorithmLSig
 from algorithms.algorithm_lsig2 import AlgorithmLSig2
 
