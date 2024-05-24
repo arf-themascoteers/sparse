@@ -18,7 +18,7 @@ class AlgorithmCreator:
             "bsdr" : AlgorithmBSDR,
             "bsdr500" : AlgorithmBSDR500,
             "bsdr3000" : AlgorithmBSDR3000,
-            "bsdr4000" : AlgorithmBSDR3000,
+            "bsdr4000" : AlgorithmBSDR4000,
             "bsdr6000" : AlgorithmBSDR6000,
             "linspacer": AlgorithmLinspacer,
         }
