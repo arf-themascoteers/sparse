@@ -6,7 +6,7 @@ import numpy as np
 import math
 
 
-class AlgorithmLSig(Algorithm):
+class AlgorithmLSig2(Algorithm):
     def __init__(self, target_size, splits):
         super().__init__(target_size, splits)
         self.criterion = torch.nn.CrossEntropyLoss()
