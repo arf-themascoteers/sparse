@@ -8,6 +8,7 @@ from algorithms.algorithm_bsdr6000 import AlgorithmBSDR6000
 from algorithms.algorithm_linspacer import AlgorithmLinspacer
 from algorithms.algorithm_scnn import AlgorithmSCNN
 from algorithms.algorithm_sfc import AlgorithmSFC
+from algorithms.algorithm_nsfc import AlgorithmNSFC
 
 
 class AlgorithmCreator:
@@ -24,7 +25,8 @@ class AlgorithmCreator:
             "bsdr6000" : AlgorithmBSDR6000,
             "linspacer": AlgorithmLinspacer,
             "scnn": AlgorithmSCNN,
-            "sfc": AlgorithmSFC
+            "sfc": AlgorithmSFC,
+            "nsfc": AlgorithmNSFC
         }
 
         if name not in algorithms:

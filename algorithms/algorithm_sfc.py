@@ -36,19 +36,19 @@ class AlgorithmSFC(Algorithm):
                 channel_weights, sparse_weights, y_hat = zhangnet(X)
                 y = y.type(torch.LongTensor).to(device)
                 mse_loss = self.criterion(y_hat, y)
-                sparse_loss = self.sparse_loss(channel_weights)
+                l1_loss = self.l1_loss(channel_weights)
                 lambda_value = self.get_lambda(epoch+1)
-                loss = mse_loss + lambda_value*sparse_loss
+                loss = mse_loss + lambda_value*l1_loss
                 loss.backward()
                 optimizer.step()
-            print(f"Epoch={epoch} MSE={round(mse_loss.item(), 5)}, L1={round(sparse_loss.item(), 5)}, Lambda={lambda_value}, LOSS={round(loss.item(), 5)}")
+            print(f"Epoch={epoch} MSE={round(mse_loss.item(), 5)}, L1={round(l1_loss.item(), 5)}, Lambda={lambda_value}, LOSS={round(loss.item(), 5)}")
         mean_weight = torch.mean(channel_weights, dim=0)
         band_indx = (torch.argsort(mean_weight, descending=True)).tolist()
         super()._set_all_indices(band_indx)
         selected_indices = band_indx[: self.target_size]
         return zhangnet, selected_indices
 
-    def sparse_loss(self, channel_weights):
+    def l1_loss(self, channel_weights):
         channel_weights = torch.sum(channel_weights, dim=1)
         m = torch.mean(channel_weights)
         return m

@@ -1,12 +1,12 @@
 from algorithm import Algorithm
 import torch
 from torch.utils.data import TensorDataset, DataLoader
-from algorithms.zhang.zhang_net import ZhangNet
+from algorithms.nsfc.nsfc import NSFC
 import numpy as np
 import math
 
 
-class AlgorithmZhang(Algorithm):
+class AlgorithmNSFC(Algorithm):
     def __init__(self, target_size, splits):
         super().__init__(target_size, splits)
         self.criterion = torch.nn.CrossEntropyLoss()
@@ -17,7 +17,7 @@ class AlgorithmZhang(Algorithm):
         if self.splits.get_name() == "ghisaconus":
             last_layer_input = 64
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-        zhangnet = ZhangNet(self.splits.train_x.shape[1], class_size, last_layer_input).to(device)
+        zhangnet = NSFC(self.splits.train_x.shape[1], class_size, last_layer_input).to(device)
         optimizer = torch.optim.Adam(zhangnet.parameters(), lr=0.001, betas=(0.9,0.999))
         X_train = torch.tensor(self.splits.train_x, dtype=torch.float32).to(device)
         y_train = torch.tensor(self.splits.train_y, dtype=torch.int32).to(device)
@@ -33,7 +33,7 @@ class AlgorithmZhang(Algorithm):
         for epoch in range(500):
             for batch_idx, (X, y) in enumerate(dataloader):
                 optimizer.zero_grad()
-                channel_weights, sparse_weights, y_hat = zhangnet(X)
+                channel_weights, y_hat = zhangnet(X)
                 y = y.type(torch.LongTensor).to(device)
                 mse_loss = self.criterion(y_hat, y)
                 l1_loss = self.l1_loss(channel_weights)
@@ -54,7 +54,7 @@ class AlgorithmZhang(Algorithm):
         return m
 
     def get_name(self):
-        return "zhang"
+        return "nsfc"
 
     def get_lambda(self, epoch):
         return 0.0001 * math.exp(-epoch/500)

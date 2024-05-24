@@ -3,7 +3,7 @@ import torch
 from algorithms.scnn.sparse import Sparse
 
 
-class SFC(nn.Module):
+class NSFC(nn.Module):
     def __init__(self, bands, number_of_classes, last_layer_input):
         super().__init__()
         torch.manual_seed(3)
@@ -21,16 +21,14 @@ class SFC(nn.Module):
             nn.LeakyReLU(),
             nn.Linear(64, self.number_of_classes)
         )
-        self.sparse = Sparse()
         num_params = sum(p.numel() for p in self.parameters() if p.requires_grad)
         print("Number of learnable parameters:", num_params)
 
     def forward(self, X):
         channel_weights = self.weighter(X)
-        sparse_weights = self.sparse(channel_weights)
-        reweight_out = X * sparse_weights
+        reweight_out = X * channel_weights
         output = self.classnet(reweight_out)
-        return channel_weights, sparse_weights, output
+        return channel_weights, output
 
 
 
