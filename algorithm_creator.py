@@ -36,6 +36,7 @@ class AlgorithmCreator:
             "zhangfc": AlgorithmZhangFC,
             "ns": AlgorithmNS,
             "sig": AlgorithmSig,
+            "sigFC": AlgorithmSigFC,
             "lsig": AlgorithmLSig,
             "lsig2": AlgorithmLSig2
         }
