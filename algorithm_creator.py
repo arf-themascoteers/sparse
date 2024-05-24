@@ -9,6 +9,7 @@ from algorithms.algorithm_linspacer import AlgorithmLinspacer
 from algorithms.algorithm_scnn import AlgorithmSCNN
 from algorithms.algorithm_sfc import AlgorithmSFC
 from algorithms.algorithm_nsfc import AlgorithmNSFC
+from algorithms.algorithm_zhangfc import AlgorithmZhangFC
 
 
 class AlgorithmCreator:
@@ -26,7 +27,8 @@ class AlgorithmCreator:
             "linspacer": AlgorithmLinspacer,
             "scnn": AlgorithmSCNN,
             "sfc": AlgorithmSFC,
-            "nsfc": AlgorithmNSFC
+            "nsfc": AlgorithmNSFC,
+            "zhangfc": AlgorithmZhangFC
         }
 
         if name not in algorithms:
