@@ -44,15 +44,14 @@ class BSDR:
     def create_optimizer(self):
         weight_decay = self.lr/10
         optimizer = torch.optim.Adam(self.model.parameters(), lr=self.lr, weight_decay=weight_decay)
-        scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=100, gamma=0.9)
-        return optimizer, scheduler
+        return optimizer
 
     def fit(self, X, y, X_validation, y_validation):
         self.original_feature_size = X.shape[1]
         if self.verbose:
             self.write_columns()
         self.model.train()
-        optimizer, scheduler = self.create_optimizer()
+        optimizer = self.create_optimizer()
         X = torch.tensor(X, dtype=torch.float32).to(self.device)
         linterp = LinearInterpolationModule(X, self.device)
         X_validation = torch.tensor(X_validation, dtype=torch.float32).to(self.device)
@@ -67,7 +66,6 @@ class BSDR:
             loss.backward()
             optimizer.step()
             optimizer.zero_grad()
-            #scheduler.step()
 
             if self.verbose:
                 row = self.dump_row(epoch, optimizer, linterp, y, linterp_validation, y_validation)
