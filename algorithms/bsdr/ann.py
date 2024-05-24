@@ -12,25 +12,15 @@ class ANN(nn.Module):
 
         init_vals = torch.linspace(0.001,0.99, self.target_size+2)
         self.indices = nn.Parameter(torch.tensor([ANN.inverse_sigmoid_torch(init_vals[i + 1]) for i in range(self.target_size)], requires_grad=True).to(self.device))
-        if structure == None:
-            structure = [128,64]
-        self.linear = self.create_structure(structure)
+        self.linear = nn.Sequential(
+            nn.Linear(self.target_size, 128),
+            nn.LeakyReLU(),
+            nn.Linear(128, 64),
+            nn.LeakyReLU(),
+            nn.Linear(64, self.class_size)
+        )
         num_params = sum(p.numel() for p in self.parameters() if p.requires_grad)
         print("Number of learnable parameters:", num_params)
-
-
-    def create_structure(self, structure):
-        if structure == None:
-            structure = []
-        structure = [self.target_size] + structure + [self.class_size]
-        odict = OrderedDict()
-
-        for index in range(len(structure)-1):
-            odict['fc' + str(index+1)] = nn.Linear(structure[index], structure[index+1])
-            if index != len(structure)-2:
-                odict['lrelu' + str(index+1)] = nn.LeakyReLU()
-
-        return nn.Sequential(odict)
 
     @staticmethod
     def inverse_sigmoid_torch(x):

@@ -18,7 +18,7 @@ class AlgorithmCreator:
         if name not in algorithms:
             raise KeyError(f"No algorithm named {name} exists")
 
-        if name in ["bsdr","rec"]:
+        if name in ["bsdr"]:
             return algorithms[name](target_size, splits, repeat, fold, verbose=verbose)
 
         return algorithms[name](target_size, splits)

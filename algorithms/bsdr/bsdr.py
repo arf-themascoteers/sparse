@@ -10,7 +10,7 @@ import train_test_evaluator
 
 
 class BSDR:
-    def __init__(self, target_size, class_size, split, machine_name, repeat, fold, structure=None, verbose=True, epochs=2000):
+    def __init__(self, target_size, class_size, split, machine_name, repeat, fold, verbose=True):
         self.target_size = target_size
         self.class_size = class_size
         self.split = split
@@ -19,11 +19,11 @@ class BSDR:
         self.fold = fold
         self.verbose = verbose
         self.lr = 0.001
-        self.model = ANN(self.target_size, self.class_size, structure)
+        self.model = ANN(self.target_size, self.class_size)
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         self.model.to(self.device)
         self.criterion = self.get_criterion()
-        self.epochs = epochs
+        self.epochs = 2000
         self.csv_file = os.path.join("results", f"{self.machine_name}-{self.split.get_name()}-{target_size}-{self.repeat}-{self.fold}.csv")
         self.original_feature_size = None
         self.start_time = datetime.now()
