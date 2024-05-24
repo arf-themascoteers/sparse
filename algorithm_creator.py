@@ -35,8 +35,8 @@ class AlgorithmCreator:
             "zhangfc": AlgorithmZhangFC,
             "ns": AlgorithmNS,
             "sig": AlgorithmSig,
-            "lsig": AlgorithmLSIG,
-            "lsig2": AlgorithmLSIG2
+            "lsig": AlgorithmLSig,
+            "lsig2": AlgorithmLSig2
         }
 
         if name not in algorithms:
