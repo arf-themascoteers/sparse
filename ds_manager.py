@@ -13,7 +13,7 @@ class DSManager:
         self._reset_seed()
         dataset_path = f"data/{name}.csv"
         df = pd.read_csv(dataset_path)
-        df.iloc[:, 0], class_labels = pd.factorize(df.iloc[:, 0])
+        df.iloc[:, -1], class_labels = pd.factorize(df.iloc[:, -1])
         self.full_data = df.to_numpy()
         #train:validation:evaluation_train:evaluation_test = 0.45:  0.0.5:  0.50    :0.50
 
