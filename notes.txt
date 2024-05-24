@@ -1,0 +1,5 @@
+1. result_processor: classification, regression
+2. result_processor: details
+3. result_processor:classification_table_maker, regression_table_maker
+4. result_processor:classification_table_latex, regression_table_latex
+5: plotter: classification_plot, regression_plot
