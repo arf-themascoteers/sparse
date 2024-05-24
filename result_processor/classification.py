@@ -7,10 +7,10 @@ all_df = pd.DataFrame()
 root = "../saved_results"
 locations = [os.path.join(root, subfolder) for subfolder in os.listdir(root)]
 locations = [loc for loc in locations if os.path.exists(loc)]
-algorithms = ["mcuve","spa","bsnet","zhang","bsdr"]
-datasets = ["ghisaconus","indian_pines"]
+algorithms = ["linspacer","bsnet","zhang","bsdr"]
+datasets = ["indian_pines"]
 targets = [5,10,15,20,25,30]
-df2 = pd.DataFrame(columns=["dataset","target_size","algorithm","time","oa","k"])
+df2 = pd.DataFrame(columns=["dataset","target_size","algorithm","time","oa","aa","k"])
 
 
 def add_df(base_df, path):
@@ -55,8 +55,9 @@ def make_complete_main_df():
                         "target_size":t,
                         "algorithm": a,
                         "time": 100,
-                        "oa": 0.2,
-                        "k": 0.8
+                        "oa": 0,
+                        "aa": 0,
+                        "k": 0
                     }
                 elif len(entries) >= 1:
                     if len(entries) > 1:
@@ -67,12 +68,15 @@ def make_complete_main_df():
                         "algorithm": a,
                         "time": entries.iloc[0]["time"],
                         "oa": entries.iloc[0]["oa"],
+                        "aa": entries.iloc[0]["aa"],
                         "k": entries.iloc[0]["k"]
                     }
 
 
 def add_all_in_main():
     global all_df, df2
+    if len(all_df) == 0:
+        return
     for d in datasets:
         for t in targets:
             entries = all_df[(all_df["dataset"] == d)]
@@ -83,8 +87,9 @@ def add_all_in_main():
                     "target_size": t,
                     "algorithm": "all_bands",
                     "time": 100,
-                    "oa": 0.2,
-                    "k": 0.8
+                    "oa": 0,
+                    "aa": 0,
+                    "k": 0
                 }
             elif len(entries) >= 1:
                 if len(entries) > 1:
@@ -96,6 +101,7 @@ def add_all_in_main():
                     "algorithm": "all_bands",
                     "time": 0,
                     "oa": entries.iloc[0]["oa"],
+                    "aa": entries.iloc[0]["aa"],
                     "k": entries.iloc[0]["k"]
                 }
 
