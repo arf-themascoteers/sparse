@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 
 def plot_oak(source="final_results/final.csv", dest = "saved_figs/oak.png"):
     df_original = pd.read_csv(source)
-    priority_order = ['linspacer', 'bsdr', 'bsdr500', 'bsdr3000', 'all_bands']
+    priority_order = ["linspacer","bsdr500","bsdr","bsdr3000","bsdr4000","bsdr6000"]
     display_alg = priority_order
     df_original['algorithm'] = pd.Categorical(df_original['algorithm'], categories=priority_order, ordered=True)
     df_original = df_original.sort_values('algorithm')
@@ -25,6 +25,8 @@ def plot_oak(source="final_results/final.csv", dest = "saved_figs/oak.png"):
             for index, algorithm in enumerate(priority_order):
                 alg_df = dataset_df[dataset_df["algorithm"] == algorithm]
                 alg_df = alg_df.sort_values(by='target_size')
+                if len(alg_df) == 0:
+                    continue
                 if algorithm == "All Bands":
                     axes[metric_index, ds_index].plot(alg_df['target_size'], alg_df[metric], label=algorithm,
                             linestyle='--', color=colors[index])
