@@ -1,7 +1,7 @@
 from algorithm import Algorithm
 import torch
 from torch.utils.data import TensorDataset, DataLoader
-from algorithms.ns.ns_net import NSNet
+from algorithms.nsnet.ns_net import NSNet
 import numpy as np
 import math
 
