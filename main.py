@@ -2,9 +2,9 @@ from task_runner import TaskRunner
 
 if __name__ == '__main__':
     tasks = {
-        "algorithms" : ["ns","zhang","scnn","sfc","nsfc","zhangfc"],
+        "algorithms" : ["zhang","sig","lsig","lsig2"],
         "datasets" : ["indian_pines"],
         "target_sizes" : [25, 30, 5, 10, 15, 20]
     }
-    ev = TaskRunner(tasks,1,10,"6.csv",skip_all_bands=True)
+    ev = TaskRunner(tasks,1,10,"7.csv",skip_all_bands=True)
     ev.evaluate()
