@@ -5,9 +5,22 @@ Summary: Collection of Feature Selection Methods for Near-Infrared Spectroscopy
 Home-page: https://github.com/mcFloskel/auswahl
 Maintainer: Florian Buckermann, Stefan Heil
 Requires-Python: >=3.8
-Provides-Extra: tests
-Provides-Extra: docs
 License-File: LICENSE
+Requires-Dist: numpy
+Requires-Dist: scipy
+Requires-Dist: scikit-learn
+Requires-Dist: pandas
+Requires-Dist: joblib
+Requires-Dist: matplotlib
+Provides-Extra: tests
+Requires-Dist: pytest; extra == "tests"
+Requires-Dist: pytest-cov; extra == "tests"
+Provides-Extra: docs
+Requires-Dist: sphinx; extra == "docs"
+Requires-Dist: sphinx-gallery; extra == "docs"
+Requires-Dist: sphinx_rtd_theme; extra == "docs"
+Requires-Dist: numpydoc; extra == "docs"
+Requires-Dist: matplotlib; extra == "docs"
 
 .. -*- mode: rst -*-
 
