@@ -2,6 +2,7 @@ import pandas as pd
 from sklearn.model_selection import train_test_split
 from data_splits import DataSplits
 import numpy as np
+from sklearn.preprocessing import MinMaxScaler
 
 
 class DSManager:
@@ -14,23 +15,25 @@ class DSManager:
         dataset_path = f"data/{name}.csv"
         df = pd.read_csv(dataset_path)
         df.iloc[:, -1], class_labels = pd.factorize(df.iloc[:, -1])
-        self.full_data = df.to_numpy()
+        scaler = MinMaxScaler()
+        df.iloc[:, :-1] = scaler.fit_transform(df.iloc[:, :-1])
+        self.data = df.to_numpy()
         #train:validation:evaluation_train:evaluation_test = 0.45:  0.0.5:  0.50    :0.50
 
     def get_name(self):
         return self.name
 
     def count_rows(self):
-        return self.full_data.shape[0]
+        return self.data.shape[0]
 
     def count_features(self):
-        return self.full_data.shape[1]-1
+        return self.data.shape[1]-1
     
     def _shuffle(self, seed):
         self._set_seed(seed)
-        shuffled_indices = np.random.permutation(self.full_data.shape[0])
+        shuffled_indices = np.random.permutation(self.data.shape[0])
         self._reset_seed()
-        return self.full_data[shuffled_indices]
+        return self.data[shuffled_indices]
 
     def get_k_folds(self):
         for i in range(self.folds):
