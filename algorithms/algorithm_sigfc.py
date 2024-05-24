@@ -17,7 +17,7 @@ class AlgorithmSigFC(Algorithm):
         if self.splits.get_name() == "ghisaconus":
             last_layer_input = 64
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-        zhangnet = Sig(self.splits.train_x.shape[1], class_size, last_layer_input).to(device)
+        zhangnet = SigFC(self.splits.train_x.shape[1], class_size, last_layer_input).to(device)
         optimizer = torch.optim.Adam(zhangnet.parameters(), lr=0.001, betas=(0.9,0.999))
         X_train = torch.tensor(self.splits.train_x, dtype=torch.float32).to(device)
         y_train = torch.tensor(self.splits.train_y, dtype=torch.int32).to(device)
