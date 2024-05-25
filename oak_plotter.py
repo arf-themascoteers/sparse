@@ -5,7 +5,8 @@ import matplotlib.pyplot as plt
 
 def plot_oak(source="final_results/final.csv", dest = "saved_figs/oak.png"):
     df_original = pd.read_csv(source)
-    priority_order = ["zhang","sfc","scnn"]
+    priority_order = ["ns","zhang","scnn","sfc","nsfc","zhangfc"]
+    priority_order = ["zhang","zhangfc"]
     display_alg = priority_order
     df_original['algorithm'] = pd.Categorical(df_original['algorithm'], categories=priority_order, ordered=True)
     df_original = df_original.sort_values('algorithm')

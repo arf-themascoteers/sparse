@@ -103,7 +103,8 @@ def create_csv(name="final",filter=None):
     all_df = pd.DataFrame()
     locations = [os.path.join("saved_results", subfolder) for subfolder in filter]
     locations = [loc for loc in locations if os.path.exists(loc)]
-    algorithms = ["zhang","sfc","scnn"]
+    algorithms = ["ns","zhang","scnn","sfc","nsfc","zhangfc"]
+    algorithms = ["zhang","zhangfc"]
     datasets = ["indian_pines"]
     targets = [5,10,15,20,25,30]
     all_df, main_df = create_dfs(all_df, main_df, locations)
