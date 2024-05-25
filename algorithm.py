@@ -6,9 +6,10 @@ from train_test_evaluator import evaluate_train_test_pair
 
 
 class Algorithm(ABC):
-    def __init__(self, target_size:int, splits:DataSplits, repeat, fold, verbose):
+    def __init__(self, target_size:int, splits:DataSplits, tag, repeat, fold, verbose):
         self.target_size = target_size
         self.splits = splits
+        self.tag = tag
         self.repeat = repeat
         self.fold = fold
         self.verbose = verbose

@@ -8,13 +8,15 @@ from train_test_evaluator import evaluate_train_test_pair
 
 
 class TaskRunner:
-    def __init__(self, task, repeat=1, folds=1, filename="results.csv", skip_all_bands=False, verbose=False):
+    def __init__(self, task, repeat=1, folds=1, tag="results", skip_all_bands=False, verbose=False):
         self.task = task
         self.repeat = repeat
         self.folds = folds
         self.skip_all_bands = skip_all_bands
         self.verbose = verbose
-        self.reporter = Reporter(filename, self.skip_all_bands)
+        self.tag = tag
+        self.file = f"{self.tag}.csv"
+        self.reporter = Reporter(self.file, self.skip_all_bands)
         self.cache = pd.DataFrame(columns=["dataset","fold","algorithm","repeat",
                                            "oa","aa","k","time","selected_features"])
 
@@ -28,8 +30,9 @@ class TaskRunner:
                     print(splits.splits_description())
                     for algorithm in self.task["algorithms"]:
                         for repeat_no in range(self.repeat):
-                            algorithm_object = AlgorithmCreator.create(algorithm, target_size, splits, repeat_no, fold, self.verbose)
+                            algorithm_object = AlgorithmCreator.create(algorithm, target_size, splits, tag, repeat_no, fold, self.verbose)
                             self.process_a_case(algorithm_object, fold, repeat_no)
+        return self.file
 
     def process_a_case(self, algorithm:Algorithm, fold, repeat):
         metric = self.reporter.get_saved_metrics(algorithm, fold, repeat)

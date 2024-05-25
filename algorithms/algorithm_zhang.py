@@ -9,8 +9,9 @@ from data_splits import DataSplits
 
 class AlgorithmZhang(Algorithm):
     def __init__(self, target_size:int, splits:DataSplits, repeat, fold, verbose):
-        super().__init__(target_size, splits, repeat, fold, verbose)
+        super().__init__(target_size, splits, tag, repeat, fold, verbose)
         self.criterion = torch.nn.CrossEntropyLoss()
+
 
     def get_selected_indices(self):
         class_size = len(np.unique(self.splits.train_y))
