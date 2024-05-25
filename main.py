@@ -4,7 +4,7 @@ import oak_plotter
 if __name__ == '__main__':
     result_file = "10.csv"
     tasks = {
-        "algorithms" : ["zhangfc","zhang"],
+        "algorithms" : ["linspacer","zhang"],
         "datasets" : ["indian_pines"],
         "target_sizes" : [25, 30, 5, 10, 15, 20]
     }

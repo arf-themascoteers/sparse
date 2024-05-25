@@ -8,6 +8,7 @@ def plot_oak(source):
     os.makedirs("saved_figs", exist_ok=True)
     dest = os.path.join("saved_figs",f"{source.split('.')[0]}.png")
     df = pd.read_csv(os.path.join("results", source))
+    df.to_csv(os.path.join("saved_figs","source.split.csv"), index=False)
     colors = ['#909c86', '#e389b9', '#269658', '#5c1ad6', '#f20a21', '#000000']
     markers = ['s', 'P', 'D', '^', 'o', '*', '.']
     labels = ["Overall Accuracy (OA)", "Average Accuracy (AA)", "Cohen's kappa ($\kappa$)"]

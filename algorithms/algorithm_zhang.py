@@ -10,6 +10,7 @@ class AlgorithmZhang(Algorithm):
     def __init__(self, target_size, splits):
         super().__init__(target_size, splits)
         self.criterion = torch.nn.CrossEntropyLoss()
+        self.verbose = False
 
     def get_selected_indices(self):
         class_size = len(np.unique(self.splits.train_y))
@@ -41,7 +42,8 @@ class AlgorithmZhang(Algorithm):
                 loss = mse_loss + lambda_value*l1_loss
                 loss.backward()
                 optimizer.step()
-            print(f"Epoch={epoch} MSE={round(mse_loss.item(), 5)}, L1={round(l1_loss.item(), 5)}, Lambda={lambda_value}, LOSS={round(loss.item(), 5)}")
+            if self.verbose:
+                print(f"Epoch={epoch} MSE={round(mse_loss.item(), 5)}, L1={round(l1_loss.item(), 5)}, Lambda={lambda_value}, LOSS={round(loss.item(), 5)}")
         mean_weight = torch.mean(channel_weights, dim=0)
         band_indx = (torch.argsort(mean_weight, descending=True)).tolist()
         print("Zhang - selected bands and weights:")

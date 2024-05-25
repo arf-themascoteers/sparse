@@ -17,5 +17,9 @@ class AlgorithmLinspacer(Algorithm):
     def transform(self, X):
         return X[:,self.indices]
 
+    def is_cacheable(self):
+        return False
+
     def get_name(self):
         return "linspacer"
+

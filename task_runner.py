@@ -51,7 +51,7 @@ class TaskRunner:
         return metric
 
     def save_to_cache(self, algorithm, fold, repeat, metric:Metrics):
-        if not algorithm.is_independent_of_target_size():
+        if not algorithm.is_cacheable():
             return
         self.cache.loc[len(self.cache)] = {
             "dataset":algorithm.splits.get_name(), "algorithm": algorithm.get_name(),
@@ -60,7 +60,7 @@ class TaskRunner:
         }
 
     def get_from_cache(self, algorithm:Algorithm, fold, repeat_no):
-        if not algorithm.is_independent_of_target_size():
+        if not algorithm.is_cacheable():
             return None
         if len(self.cache) == 0:
             return None
