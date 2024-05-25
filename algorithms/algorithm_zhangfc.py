@@ -44,6 +44,9 @@ class AlgorithmZhangFC(Algorithm):
             print(f"Epoch={epoch} MSE={round(mse_loss.item(), 5)}, L1={round(l1_loss.item(), 5)}, Lambda={lambda_value}, LOSS={round(loss.item(), 5)}")
         mean_weight = torch.mean(channel_weights, dim=0)
         band_indx = (torch.argsort(mean_weight, descending=True)).tolist()
+        print("ZhangFC - selected bands and weights:")
+        print("".join([str(i).ljust(10) for i in band_indx]))
+        print("".join([str(round(mean_weight[i].item(),3)).ljust(10) for i in band_indx]))
         super()._set_all_indices(band_indx)
         selected_indices = band_indx[: self.target_size]
         return zhangnet, selected_indices
