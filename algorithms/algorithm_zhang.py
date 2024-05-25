@@ -4,13 +4,13 @@ from torch.utils.data import TensorDataset, DataLoader
 from algorithms.zhang.zhang_net import ZhangNet
 import numpy as np
 import math
+from data_splits import DataSplits
 
 
 class AlgorithmZhang(Algorithm):
-    def __init__(self, target_size, splits):
-        super().__init__(target_size, splits)
+    def __init__(self, target_size:int, splits:DataSplits, repeat, fold, verbose):
+        super().__init__(target_size, splits, repeat, fold, verbose)
         self.criterion = torch.nn.CrossEntropyLoss()
-        self.verbose = False
 
     def get_selected_indices(self):
         class_size = len(np.unique(self.splits.train_y))
