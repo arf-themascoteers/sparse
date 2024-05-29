@@ -27,7 +27,7 @@ class AlgorithmZhang(Algorithm):
         l1_loss = 0
         mse_loss = 0
 
-        for epoch in range(500):
+        for epoch in range(2):
             for batch_idx, (X, y) in enumerate(dataloader):
                 optimizer.zero_grad()
                 channel_weights, sparse_weights, y_hat = zhangnet(X)
@@ -59,9 +59,6 @@ class AlgorithmZhang(Algorithm):
         channel_weights = torch.sum(channel_weights, dim=1)
         m = torch.mean(channel_weights)
         return m
-
-    def get_name(self):
-        return "zhang"
 
     def get_lambda(self, epoch):
         return 0.0001 * math.exp(-epoch/500)

@@ -4,6 +4,7 @@ from metrics import Metrics
 from datetime import datetime
 import train_test_evaluator
 import torch
+import importlib
 
 
 class Algorithm(ABC):
@@ -42,9 +43,10 @@ class Algorithm(ABC):
     def get_selected_indices(self):
         pass
 
-    @abstractmethod
     def get_name(self):
-        pass
+        class_name = self.__class__.__name__
+        name_part = class_name[len("Algorithm"):].lower()
+        return name_part
 
     def get_all_indices(self):
         return self.all_indices
@@ -57,3 +59,10 @@ class Algorithm(ABC):
 
     def is_cacheable(self):
         return True
+
+    @staticmethod
+    def create(name, target_size, splits, tag, reporter, verbose):
+        class_name = f"Algorithm{name.capitalize()}"
+        module = importlib.import_module(f"algorithms.algorithm_{name}")
+        clazz = getattr(module, class_name)
+        return clazz(target_size, splits, tag, reporter, verbose)

@@ -20,7 +20,3 @@ class AlgorithmLinspacer(Algorithm):
 
     def is_cacheable(self):
         return False
-
-    def get_name(self):
-        return "linspacer"
-

@@ -1,5 +1,4 @@
 from ds_manager import DSManager
-from algorithm_creator import AlgorithmCreator
 from reporter import Reporter
 import pandas as pd
 from metrics import Metrics
@@ -27,7 +26,7 @@ class TaskRunner:
                 for fold, splits in enumerate(dataset.get_k_folds()):
                     self.reporter.increase_fold()
                     for algorithm in self.task["algorithms"]:
-                        algorithm_object = AlgorithmCreator.create(algorithm, target_size, splits, self.tag, self.reporter, self.verbose)
+                        algorithm_object = Algorithm.create(algorithm, target_size, splits, self.tag, self.reporter, self.verbose)
                         self.process_a_case(algorithm_object, fold)
 
         return self.reporter.get_summary(), self.reporter.get_details()
@@ -88,9 +87,3 @@ class TaskRunner:
             return
         oa, aa, k = train_test_evaluator.evaluate_split(splits)
         self.reporter.write_details_all_features(splits.get_name(), oa, aa, k)
-
-
-
-
-
-
