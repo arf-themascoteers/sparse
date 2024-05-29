@@ -41,9 +41,7 @@ class ZhangNet(nn.Module):
         reweight_out = X * sparse_weights
         reweight_out = reweight_out.reshape(reweight_out.shape[0],1,reweight_out.shape[1])
         output = self.classnet(reweight_out)
-        #WARNING
-        #return channel_weights, sparse_weights, output
-        return sparse_weights, sparse_weights, output
+        return channel_weights, sparse_weights, output
 
 
 
