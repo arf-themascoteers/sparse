@@ -8,5 +8,5 @@ class SparseLReluBN(nn.Module):
         super().__init__()
 
     def forward(self, X):
-        X = F.leaky_relu(X - 0.08)
+        X = F.leaky_relu(X - 0.01)
         return X
