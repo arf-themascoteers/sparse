@@ -52,6 +52,7 @@ class Algorithm_zhang(Algorithm):
 
             if self.verbose:
                 print(f"Epoch={epoch} MSE={round(mse_loss.item(), 5)}, L1={round(l1_loss.item(), 5)}, Lambda={lambda_value}, LOSS={round(loss.item(), 5)}")
+                print(f"Min weight={torch.min(channel_weights).item()}, Max weight={torch.max(channel_weights).item()}")
 
         print("Zhang - selected bands and weights:")
         print("".join([str(i).ljust(10) for i in self.selected_indices]))
