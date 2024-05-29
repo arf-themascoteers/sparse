@@ -4,12 +4,15 @@ from metrics import Metrics
 
 
 class Reporter:
-    def __init__(self, filename="results.csv", skip_all_bands=False):
+    def __init__(self, tag="results", skip_all_bands=False):
+        self.tag = tag
         self.skip_all_bands = skip_all_bands
-        self.summary_filename = filename
-        self.details_filename = f"details_{self.summary_filename}"
+        self.summary_filename = f"summary_{tag}.csv"
+        self.details_filename = f"details_{tag}.csv"
         self.summary_file = os.path.join("results", self.summary_filename)
         self.details_file = os.path.join("results", self.details_filename)
+
+        self.current_fold = -1
 
         if not os.path.exists(self.summary_file):
             with open(self.summary_file, 'w') as file:
@@ -17,7 +20,7 @@ class Reporter:
 
         if not os.path.exists(self.details_file):
             with open(self.details_file, 'w') as file:
-                file.write("dataset,target_size,fold,algorithm,repeat,time,oa,aa,k,selected_features\n")
+                file.write("dataset,target_size,fold,algorithm,time,oa,aa,k,selected_features\n")
 
         if not self.skip_all_bands:
             self.all_features_details_filename = f"all_features_details_{self.summary_filename}"
@@ -33,15 +36,23 @@ class Reporter:
                 with open(self.all_features_details_file, 'w') as file:
                     file.write("fold,dataset,oa,aa,k\n")
 
-    def write_details(self, algorithm, fold, repeat, metric:Metrics):
+    def increase_fold(self):
+        self.current_fold += 1
+
+    def get_summary(self):
+        return self.summary_file
+
+    def get_details(self):
+        return self.details_file
+
+    def write_details(self, algorithm, metric:Metrics):
         time = Reporter.sanitize_metric(metric.time)
         oa = Reporter.sanitize_metric(metric.oa)
         aa = Reporter.sanitize_metric(metric.aa)
         k = Reporter.sanitize_metric(metric.k)
         metric.selected_features = sorted(metric.selected_features)
         with open(self.details_file, 'a') as file:
-            file.write(f"{algorithm.splits.get_name()},{algorithm.target_size},{fold},{algorithm.get_name()},"
-                       f"{repeat},"
+            file.write(f"{algorithm.splits.get_name()},{algorithm.target_size},{self.current_fold},{algorithm.get_name()},"
                        f"{time},{oa},{aa},{k},{'-'.join([str(i) for i in metric.selected_features])}\n")
         self.update_summary(algorithm)
 
@@ -99,24 +110,23 @@ class Reporter:
             df2.loc[mask, 'k'] = k
         df2.to_csv(self.all_features_summary_file, index=False)
 
-    def get_saved_metrics(self, algorithm, fold, repeat):
+    def get_saved_metrics(self, algorithm):
         df = pd.read_csv(self.details_file)
         if len(df) == 0:
             return None
         rows = df.loc[(df["dataset"] == algorithm.splits.get_name()) & (df["target_size"] == algorithm.target_size) &
-                      (df["fold"] == fold) & (df["algorithm"] == algorithm.get_name()) &
-                      (df["repeat"] == repeat)
+                      (df["fold"] == self.current_fold) & (df["algorithm"] == algorithm.get_name())
                       ]
         if len(rows) == 0:
             return None
         row = rows.iloc[0]
         return Metrics(row["time"], row["oa"], row["aa"], row["k"], row["selected_features"])
 
-    def get_saved_metrics_for_all_feature(self, fold, dataset):
+    def get_saved_metrics_for_all_feature(self, dataset):
         df = pd.read_csv(self.all_features_details_file)
         if len(df) == 0:
             return None, None, None
-        rows = df.loc[(df['fold'] == fold) & (df['dataset'] == dataset)]
+        rows = df.loc[(df['fold'] == self.current_fold) & (df['dataset'] == dataset)]
         if len(rows) == 0:
             return None, None, None
         row = rows.iloc[0]

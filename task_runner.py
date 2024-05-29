@@ -8,16 +8,14 @@ from train_test_evaluator import evaluate_train_test_pair
 
 
 class TaskRunner:
-    def __init__(self, task, repeat=1, folds=1, tag="results", skip_all_bands=False, verbose=False):
+    def __init__(self, task, folds=1, tag="results", skip_all_bands=False, verbose=False):
         self.task = task
-        self.repeat = repeat
         self.folds = folds
         self.skip_all_bands = skip_all_bands
         self.verbose = verbose
         self.tag = tag
-        self.file = f"{self.tag}.csv"
-        self.reporter = Reporter(self.file, self.skip_all_bands)
-        self.cache = pd.DataFrame(columns=["dataset","fold","algorithm","repeat",
+        self.reporter = Reporter(self.tag, self.skip_all_bands)
+        self.cache = pd.DataFrame(columns=["dataset","fold","algorithm",
                                            "oa","aa","k","time","selected_features"])
 
     def evaluate(self):
@@ -27,42 +25,43 @@ class TaskRunner:
                 self.evaluate_for_all_features(dataset)
             for target_size in self.task["target_sizes"]:
                 for fold, splits in enumerate(dataset.get_k_folds()):
-                    print(splits.splits_description())
+                    self.reporter.increase_fold()
                     for algorithm in self.task["algorithms"]:
-                        for repeat_no in range(self.repeat):
-                            algorithm_object = AlgorithmCreator.create(algorithm, target_size, splits, tag, repeat_no, fold, self.verbose)
-                            self.process_a_case(algorithm_object, fold, repeat_no)
-        return self.file
+                        algorithm_object = AlgorithmCreator.create(algorithm, target_size, splits, self.tag, self.reporter, self.verbose)
+                        self.process_a_case(algorithm_object, fold)
 
-    def process_a_case(self, algorithm:Algorithm, fold, repeat):
-        metric = self.reporter.get_saved_metrics(algorithm, fold, repeat)
-        if metric is not None:
+        return self.reporter.get_summary(), self.reporter.get_details()
+
+    def process_a_case(self, algorithm:Algorithm, fold):
+        metric = self.reporter.get_saved_metrics(algorithm)
+        if metric is None:
+            metric = self.get_results_for_a_case(algorithm, fold)
+            self.reporter.write_details(algorithm, metric)
+        else:
             print(f"{algorithm.splits.get_name()} for size {algorithm.target_size} for fold {fold} for {algorithm.get_name()} was done")
-            return
-        metric = self.get_results_for_a_case(algorithm, fold, repeat)
-        self.reporter.write_details(algorithm, fold, repeat, metric)
 
-    def get_results_for_a_case(self, algorithm:Algorithm, fold, repeat):
-        metric = self.get_from_cache(algorithm, fold, repeat)
+    def get_results_for_a_case(self, algorithm:Algorithm, fold):
+        metric = self.get_from_cache(algorithm, fold)
         if metric is not None:
             print(f"Selected features got from cache for {algorithm.splits.get_name()} for size {algorithm.target_size} for fold {fold} for {algorithm.get_name()}")
-            oa, aa, k = algorithm.compute_performance_with_selected_indices(metric.selected_features)
+            algorithm.set_selected_indices(metric.selected_features)
+            oa, aa, k = algorithm.compute_performance()
             return Metrics(metric.time, oa, aa, k, metric.selected_features)
-        print(f"Computing {algorithm.get_name()} {algorithm.splits.get_name()} Fold {fold} Repeat {repeat}")
+        print(f"Computing {algorithm.get_name()} {algorithm.splits.get_name()} Fold {fold}")
         metric = algorithm.compute_performance()
-        self.save_to_cache(algorithm, fold, repeat, metric)
+        self.save_to_cache(algorithm, fold, metric)
         return metric
 
-    def save_to_cache(self, algorithm, fold, repeat, metric:Metrics):
+    def save_to_cache(self, algorithm, fold, metric:Metrics):
         if not algorithm.is_cacheable():
             return
         self.cache.loc[len(self.cache)] = {
             "dataset":algorithm.splits.get_name(), "algorithm": algorithm.get_name(),
-            "fold": fold, "repeat":repeat,
+            "fold": fold,
             "time":metric.time,"oa":metric.oa,"aa":metric.aa,"k":metric.k, "selected_features":algorithm.get_all_indices()
         }
 
-    def get_from_cache(self, algorithm:Algorithm, fold, repeat_no):
+    def get_from_cache(self, algorithm:Algorithm, fold):
         if not algorithm.is_cacheable():
             return None
         if len(self.cache) == 0:
@@ -70,8 +69,7 @@ class TaskRunner:
         rows = self.cache.loc[
             (self.cache["dataset"] == algorithm.splits.get_name()) &
             (self.cache["fold"] == fold) &
-            (self.cache["algorithm"] == algorithm.get_name()) &
-            (self.cache["repeat"] == repeat_no)
+            (self.cache["algorithm"] == algorithm.get_name())
         ]
         if len(rows) == 0:
             return None
@@ -84,13 +82,13 @@ class TaskRunner:
             self.evaluate_for_all_features_fold(fold, splits)
 
     def evaluate_for_all_features_fold(self, fold, splits):
-        oa, aa, k = self.reporter.get_saved_metrics_for_all_feature(fold, splits.get_name())
+        oa, aa, k = self.reporter.get_saved_metrics_for_all_feature(splits.get_name())
         if oa is not None and k is not None:
             print(f"Fold {fold} for {splits.get_name()} was done")
             return
         oa, aa, k = evaluate_train_test_pair(splits.evaluation_train_x, splits.evaluation_train_y,
                                                     splits.evaluation_test_x, splits.evaluation_test_y)
-        self.reporter.write_details_all_features(fold, splits.get_name(), oa, aa, k)
+        self.reporter.write_details_all_features(splits.get_name(), oa, aa, k)
 
 
 

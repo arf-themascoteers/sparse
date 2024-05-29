@@ -5,8 +5,8 @@ from data_splits import DataSplits
 
 
 class AlgorithmLinspacer(Algorithm):
-    def __init__(self, target_size:int, splits:DataSplits, repeat, fold, verbose):
-        super().__init__(target_size, splits, self.tag, repeat, fold, verbose)
+    def __init__(self, target_size:int, splits:DataSplits, tag, reporter, verbose):
+        super().__init__(target_size, splits, tag, reporter, verbose)
         self.indices = None
 
     def get_selected_indices(self):
