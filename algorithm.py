@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from data_splits import DataSplits
 from metrics import Metrics
 from datetime import datetime
-from train_test_evaluator import evaluate_train_test_pair
+import train_test_evaluator
 import torch
 
 
@@ -35,9 +35,7 @@ class Algorithm(ABC):
         start_time = datetime.now()
         selected_features = self.fit()
         elapsed_time = (datetime.now() - start_time).total_seconds()
-        evaluation_train_x = self.transform(self.splits.evaluation_train_x)
-        evaluation_test_x = self.transform(self.splits.evaluation_test_x)
-        oa, aa, k = evaluate_train_test_pair(evaluation_train_x, self.splits.evaluation_train_y, evaluation_test_x, self.splits.evaluation_test_y)
+        oa, aa, k = train_test_evaluator.evaluate_split(self.splits, self)
         return Metrics(elapsed_time, oa, aa, k, selected_features)
 
     @abstractmethod
@@ -51,7 +49,7 @@ class Algorithm(ABC):
     def get_all_indices(self):
         return self.all_indices
 
-    def _set_all_indices(self, all_indices):
+    def set_all_indices(self, all_indices):
         self.all_indices = all_indices
 
     def set_selected_indices(self, selected_indices):

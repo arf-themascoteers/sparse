@@ -4,7 +4,7 @@ from reporter import Reporter
 import pandas as pd
 from metrics import Metrics
 from algorithm import Algorithm
-from train_test_evaluator import evaluate_train_test_pair
+import train_test_evaluator
 
 
 class TaskRunner:
@@ -86,8 +86,7 @@ class TaskRunner:
         if oa is not None and k is not None:
             print(f"Fold {fold} for {splits.get_name()} was done")
             return
-        oa, aa, k = evaluate_train_test_pair(splits.evaluation_train_x, splits.evaluation_train_y,
-                                                    splits.evaluation_test_x, splits.evaluation_test_y)
+        oa, aa, k = train_test_evaluator.evaluate_split(splits)
         self.reporter.write_details_all_features(splits.get_name(), oa, aa, k)
 
 

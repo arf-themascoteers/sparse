@@ -41,12 +41,14 @@ class AlgorithmZhang(Algorithm):
             if self.verbose:
                 print(f"Epoch={epoch} MSE={round(mse_loss.item(), 5)}, L1={round(l1_loss.item(), 5)}, Lambda={lambda_value}, LOSS={round(loss.item(), 5)}")
             mean_weight, all_bands, selected_bands = self.get_indices(channel_weights)
-            t_oa, t_aa, t_k, v_oa, v_aa, v_k  = self.validate(zhangnet, selected_bands)
-            self.reporter.report_epoch(epoch, mse_loss.item(), l1_loss.item(), lambda_value, loss.item(),t_oa, t_aa, t_k, v_oa, v_aa, v_k ,selected_bands, mean_weight)
+            self.set_all_indices(all_bands)
+            self.selected_indices(selected_bands)
+            oa, aa, k  = train_test_evaluator.evaluate_split(self.splits, self)
+            self.reporter.report_epoch(epoch, mse_loss.item(), l1_loss.item(), lambda_value, loss.item(),oa,aa,k,selected_bands, mean_weight)
         print("Zhang - selected bands and weights:")
-        print("".join([str(i).ljust(10) for i in selected_bands]))
-        super()._set_all_indices(all_bands)
-        return zhangnet, selected_bands
+        print("".join([str(i).ljust(10) for i in self.selected_indices]))
+
+        return zhangnet, self.selected_indices
 
     def get_indices(self, channel_weights):
         mean_weight = torch.mean(channel_weights, dim=0)
@@ -64,18 +66,5 @@ class AlgorithmZhang(Algorithm):
     def get_lambda(self, epoch):
         return 0.0001 * math.exp(-epoch/500)
 
-    def validate(self, model, selected_indices):
-        X_test = torch.tensor(self.splits.train_x, dtype=torch.float32).to(self.device)
-        y_test = torch.tensor(self.splits.train_y, dtype=torch.int32).to(self.device)
-        X_test = X_test[:, selected_indices]
-        y_hat = model(X_test)
-        t_oa, t_aa, t_k = train_test_evaluator.calculate_metrics(y_test.cpu().numpy(), y_hat.argmax(dim=1).cpu().numpy())
 
-        X_test = torch.tensor(self.splits.validation_x, dtype=torch.float32).to(self.device)
-        y_test = torch.tensor(self.splits.validation_y, dtype=torch.int32).to(self.device)
-        X_test = X_test[:, selected_indices]
-        y_hat = model(X_test)
-        v_oa, v_aa, v_k = train_test_evaluator.calculate_metrics(y_test.cpu().numpy(), y_hat.argmax(dim=1).cpu().numpy())
-
-        return t_oa, t_aa, t_k, v_oa, v_aa, v_k
 

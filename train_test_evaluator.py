@@ -8,6 +8,7 @@ from sklearn.metrics import accuracy_score
 from sklearn.metrics import cohen_kappa_score
 from sklearn.metrics import confusion_matrix
 import numpy as np
+from data_splits import DataSplits
 
 
 def average_accuracy(y_true, y_pred):
@@ -22,6 +23,16 @@ def evaluate_train_test_pair(evaluation_train_x, evaluation_train_y, evaluation_
     evaluator_algorithm.fit(evaluation_train_x, evaluation_train_y)
     y_pred = evaluator_algorithm.predict(evaluation_test_x)
     return calculate_metrics(evaluation_test_y, y_pred)
+
+
+def evaluate_split(split:DataSplits, transform=None):
+    if transform is None:
+        evaluation_train_x = split.evaluation_train_x
+        evaluation_test_x = split.evaluation_test_x
+    else:
+        evaluation_train_x = transform.transform(split.evaluation_train_x)
+        evaluation_test_x = transform.transform(split.evaluation_test_x)
+    return evaluate_train_test_pair(evaluation_train_x, split.evaluation_train_y, evaluation_test_x, split.evaluation_test_y)
 
 
 def calculate_metrics(y_test, y_pred):
