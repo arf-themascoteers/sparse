@@ -3,6 +3,7 @@ from data_splits import DataSplits
 from metrics import Metrics
 from datetime import datetime
 from train_test_evaluator import evaluate_train_test_pair
+import torch
 
 
 class Algorithm(ABC):
@@ -15,6 +16,8 @@ class Algorithm(ABC):
         self.selected_indices = []
         self.model = None
         self.all_indices = None
+        self.reporter.create_epoch_report(tag, self.get_name(), self.splits.get_name(), self.target_size)
+        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
     def fit(self):
         self.model, self.selected_indices = self.get_selected_indices()
