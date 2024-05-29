@@ -2,10 +2,10 @@ import torch
 import torch.nn as nn
 
 
-class SM(nn.Module):
+class SparseOnes(nn.Module):
     def __init__(self):
         super().__init__()
 
     def forward(self, X):
-        return torch.softmax(X, dim=1)
+        return torch.ones_like(X).to(X.device)
 
