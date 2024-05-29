@@ -149,11 +149,15 @@ class Reporter:
                 weight_labels = list(range(len(mean_weight)))
                 weight_labels = [f"weight_{i}" for i in weight_labels]
                 weight_labels = ",".join(weight_labels)
-                file.write(f"epoch,mse_loss,l1_loss,lambda_value,loss,t_oa,t_aa,t_k,oa,aa,k,selected_bands,{weight_labels}\n")
+                file.write(f"epoch,mse_loss,l1_loss,lambda_value,loss,t_oa,t_aa,t_k,oa,aa,k,selected_bands,selected_weights,{weight_labels}\n")
         with open(self.current_epoch_report_file, 'a') as file:
             weights = [str(i.item()) for i in mean_weight]
             weights = ",".join(weights)
             selected_bands_str = "-".join([str(i) for i in selected_bands])
+
+            selected_weights = [str(i.item()) for i in mean_weight[selected_bands]]
+            selected_weights_str = "-".join(selected_weights)
+
             file.write(f"{epoch},{mse_loss},{l1_loss},{lambda_value},{loss},"
                        f"{t_oa},{t_aa},{t_k},"
-                       f"{oa},{aa},{k},{selected_bands_str},{weights}\n")
+                       f"{oa},{aa},{k},{selected_bands_str},{selected_weights_str},{weights}\n")

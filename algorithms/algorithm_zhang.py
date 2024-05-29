@@ -38,18 +38,21 @@ class Algorithm_zhang(Algorithm):
                 loss = mse_loss + lambda_value*l1_loss
                 loss.backward()
                 optimizer.step()
+                if batch_idx == 0:
+                    _,_,y_hat = self.zhangnet(X_train)
+                    yp = torch.argmax(y_hat, dim=1)
+                    yt = y_train.cpu().detach().numpy()
+                    yh = yp.cpu().detach().numpy()
+                    t_oa,t_aa,t_k = train_test_evaluator.calculate_metrics(yt, yh)
+                    mean_weight, all_bands, selected_bands = self.get_indices(channel_weights)
+                    self.set_all_indices(all_bands)
+                    self.set_selected_indices(selected_bands)
+                    oa, aa, k  = train_test_evaluator.evaluate_split(self.splits, self)
+                    self.reporter.report_epoch(epoch, mse_loss.item(), l1_loss.item(), lambda_value, loss.item(),t_oa,t_aa,t_k,oa,aa,k,selected_bands, mean_weight)
+
             if self.verbose:
                 print(f"Epoch={epoch} MSE={round(mse_loss.item(), 5)}, L1={round(l1_loss.item(), 5)}, Lambda={lambda_value}, LOSS={round(loss.item(), 5)}")
-            _,_,y_hat = self.zhangnet(X_train)
-            yp = torch.argmax(y_hat, dim=1)
-            yt = y_train.cpu().detach().numpy()
-            yh = yp.cpu().detach().numpy()
-            t_oa,t_aa,t_k = train_test_evaluator.calculate_metrics(yt, yh)
-            mean_weight, all_bands, selected_bands = self.get_indices(channel_weights)
-            self.set_all_indices(all_bands)
-            self.set_selected_indices(selected_bands)
-            oa, aa, k  = train_test_evaluator.evaluate_split(self.splits, self)
-            self.reporter.report_epoch(epoch, mse_loss.item(), l1_loss.item(), lambda_value, loss.item(),t_oa,t_aa,t_k,oa,aa,k,selected_bands, mean_weight)
+
         print("Zhang - selected bands and weights:")
         print("".join([str(i).ljust(10) for i in self.selected_indices]))
 
