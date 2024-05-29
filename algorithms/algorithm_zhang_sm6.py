@@ -20,7 +20,7 @@ class Algorithm_zhang_sm6(Algorithm_zhang_fc_new_l1):
         if epoch < 100:
             return 0.0
         else:
-            return 0.1 * (epoch - 100) / (self.total_epoch - 100)
+            return 0.7 * (epoch - 100) / (self.total_epoch - 100)
 
     def l1_loss(self, channel_weights):
         return torch.mean(channel_weights)
