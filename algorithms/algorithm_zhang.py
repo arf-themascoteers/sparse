@@ -55,8 +55,8 @@ class Algorithm_zhang(Algorithm):
                     self.reporter.report_epoch(epoch, mse_loss.item(), l1_loss.item(), lambda_value, loss.item(),t_oa,t_aa,t_k,oa,aa,k,selected_bands, means_sparse)
 
             if self.verbose:
-                mean_weight = torch.mean(torch.abs(channel_weights, dim=0))
-                means_sparse = torch.mean(torch.abs(sparse_weights, dim=0))
+                mean_weight = torch.mean(torch.abs(channel_weights), dim=0)
+                means_sparse = torch.mean(torch.abs(sparse_weights), dim=0)
                 print(f"Epoch={epoch} MSE={round(mse_loss.item(), 5)}, L1={round(l1_loss.item(), 5)}, Lambda={lambda_value}, LOSS={round(loss.item(), 5)}")
                 print(f"Min cw={torch.min(mean_weight).item()}, Max cw={torch.max(mean_weight).item()}, L0-cw={torch.norm(mean_weight, p=0).item()}")
                 print(f"Min s={torch.min(means_sparse).item()}, Max s={torch.max(means_sparse).item()}, L0-s={torch.norm(means_sparse, p=0).item()}")
