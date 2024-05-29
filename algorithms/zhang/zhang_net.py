@@ -37,11 +37,12 @@ class ZhangNet(nn.Module):
 
     def forward(self, X):
         channel_weights = self.weighter(X)
-        sparse_weights = self.sparse(channel_weights)
-        reweight_out = X * sparse_weights
+        #sparse_weights = self.sparse(channel_weights)
+        #reweight_out = X * sparse_weights
+        reweight_out = X * channel_weights
         reweight_out = reweight_out.reshape(reweight_out.shape[0],1,reweight_out.shape[1])
         output = self.classnet(reweight_out)
-        return channel_weights, sparse_weights, output
+        return channel_weights, channel_weights, output
 
 
 
