@@ -51,12 +51,12 @@ class Algorithm_zhang(Algorithm):
                     self.set_all_indices(all_bands)
                     self.set_selected_indices(selected_bands)
                     oa, aa, k  = train_test_evaluator.evaluate_split(self.splits, self)
-                    means_sparse = torch.mean(sparse_weights, dim=0)
+                    means_sparse = torch.abs(torch.mean(sparse_weights, dim=0))
                     self.reporter.report_epoch(epoch, mse_loss.item(), l1_loss.item(), lambda_value, loss.item(),t_oa,t_aa,t_k,oa,aa,k,selected_bands, means_sparse)
 
             if self.verbose:
-                mean_weight = torch.mean(channel_weights, dim=0)
-                means_sparse = torch.mean(sparse_weights, dim=0)
+                mean_weight = torch.abs(torch.mean(channel_weights, dim=0))
+                means_sparse = torch.abs(torch.mean(sparse_weights, dim=0))
                 print(f"Epoch={epoch} MSE={round(mse_loss.item(), 5)}, L1={round(l1_loss.item(), 5)}, Lambda={lambda_value}, LOSS={round(loss.item(), 5)}")
                 print(f"Min cw={torch.min(mean_weight).item()}, Max cw={torch.max(mean_weight).item()}, L0-cw={torch.norm(mean_weight, p=0).item()}")
                 print(f"Min s={torch.min(means_sparse).item()}, Max s={torch.max(means_sparse).item()}, L0-s={torch.norm(means_sparse, p=0).item()}")

@@ -13,7 +13,6 @@ class Algorithm_zhang_sm8(Algorithm_zhang_fc_new_l1):
         self.zhangnet.weighter[3] = nn.Sequential(
             self.zhangnet.weighter[3],
             nn.BatchNorm1d(self.zhangnet.bands),
-            nn.ReLU()
         ).to(self.device)
 
     def get_lambda(self, epoch):
@@ -23,4 +22,4 @@ class Algorithm_zhang_sm8(Algorithm_zhang_fc_new_l1):
             return 0.7 * (epoch - 100) / (self.total_epoch - 100)
 
     def l1_loss(self, channel_weights):
-        return torch.mean(channel_weights)
+        return torch.norm(channel_weights, 1)

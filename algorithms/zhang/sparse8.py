@@ -10,6 +10,6 @@ class Sparse8(nn.Module):
     def forward(self, X):
         if self.parent.epoch < 100:
             return X
-        X = torch.where(X < 0.001, 0, X)
+        X = torch.where(torch.abs(X) < 0.001, 0, X)
         return X
 
