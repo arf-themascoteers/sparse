@@ -8,7 +8,7 @@ from data_splits import DataSplits
 import train_test_evaluator
 
 
-class AlgorithmZhang(Algorithm):
+class Algorithm_zhang(Algorithm):
     def __init__(self, target_size:int, splits:DataSplits, tag, reporter, verbose):
         super().__init__(target_size, splits, tag, reporter, verbose)
         self.criterion = torch.nn.CrossEntropyLoss()
@@ -27,7 +27,7 @@ class AlgorithmZhang(Algorithm):
         l1_loss = 0
         mse_loss = 0
 
-        for epoch in range(2):
+        for epoch in range(500):
             for batch_idx, (X, y) in enumerate(dataloader):
                 optimizer.zero_grad()
                 channel_weights, sparse_weights, y_hat = zhangnet(X)

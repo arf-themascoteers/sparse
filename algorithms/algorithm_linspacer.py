@@ -4,7 +4,7 @@ import torch
 from data_splits import DataSplits
 
 
-class AlgorithmLinspacer(Algorithm):
+class Algorithm_linspacer(Algorithm):
     def __init__(self, target_size:int, splits:DataSplits, tag, reporter, verbose):
         super().__init__(target_size, splits, tag, reporter, verbose)
         self.indices = None

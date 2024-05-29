@@ -45,7 +45,7 @@ class Algorithm(ABC):
 
     def get_name(self):
         class_name = self.__class__.__name__
-        name_part = class_name[len("Algorithm"):].lower()
+        name_part = class_name[len("Algorithm_"):]
         return name_part
 
     def get_all_indices(self):
@@ -62,7 +62,7 @@ class Algorithm(ABC):
 
     @staticmethod
     def create(name, target_size, splits, tag, reporter, verbose):
-        class_name = f"Algorithm{name.capitalize()}"
+        class_name = f"Algorithm_{name}"
         module = importlib.import_module(f"algorithms.algorithm_{name}")
         clazz = getattr(module, class_name)
         return clazz(target_size, splits, tag, reporter, verbose)
