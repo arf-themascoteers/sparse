@@ -18,7 +18,6 @@ class DSManager:
         scaler = MinMaxScaler()
         df.iloc[:, :-1] = scaler.fit_transform(df.iloc[:, :-1])
         self.data = df.to_numpy()
-        #train:validation:evaluation_train:evaluation_test = 0.45:  0.0.5:  0.50    :0.50
 
     def get_name(self):
         return self.name
@@ -42,11 +41,9 @@ class DSManager:
 
     def get_all_set_X_y_from_data(self, seed):
         data = self._shuffle(seed)
-        train_validation, evaluation = train_test_split(data, test_size=0.5, random_state=seed)
-        train, validation = train_test_split(train_validation, test_size=0.1, random_state=seed)
-        evaluation_train, evaluation_test = train_test_split(train_validation, test_size=0.5, random_state=seed)
-        return DataSplits(self.name, *DSManager.get_X_y_from_data(train),
-                          *DSManager.get_X_y_from_data(validation),
+        bs_train, evaluation = train_test_split(data, test_size=0.5, random_state=seed)
+        evaluation_train, evaluation_test = train_test_split(bs_train, test_size=0.5, random_state=seed)
+        return DataSplits(self.name, *DSManager.get_X_y_from_data(bs_train),
                           *DSManager.get_X_y_from_data(evaluation_train),
                           *DSManager.get_X_y_from_data(evaluation_test)
                           )

@@ -14,12 +14,12 @@ class AlgorithmZhang(Algorithm):
         self.criterion = torch.nn.CrossEntropyLoss()
 
     def get_selected_indices(self):
-        class_size = len(np.unique(self.splits.train_y))
+        class_size = len(np.unique(self.splits.bs_train_y))
         last_layer_input = 100
-        zhangnet = ZhangNet(self.splits.train_x.shape[1], class_size, last_layer_input).to(self.device)
+        zhangnet = ZhangNet(self.splits.bs_train_x.shape[1], class_size, last_layer_input).to(self.device)
         optimizer = torch.optim.Adam(zhangnet.parameters(), lr=0.001, betas=(0.9,0.999))
-        X_train = torch.tensor(self.splits.train_x, dtype=torch.float32).to(self.device)
-        y_train = torch.tensor(self.splits.train_y, dtype=torch.int32).to(self.device)
+        X_train = torch.tensor(self.splits.bs_train_x, dtype=torch.float32).to(self.device)
+        y_train = torch.tensor(self.splits.bs_train_y, dtype=torch.int32).to(self.device)
         dataset = TensorDataset(X_train, y_train)
         dataloader = DataLoader(dataset, batch_size=128, shuffle=True)
         channel_weights = None
@@ -42,7 +42,7 @@ class AlgorithmZhang(Algorithm):
                 print(f"Epoch={epoch} MSE={round(mse_loss.item(), 5)}, L1={round(l1_loss.item(), 5)}, Lambda={lambda_value}, LOSS={round(loss.item(), 5)}")
             mean_weight, all_bands, selected_bands = self.get_indices(channel_weights)
             self.set_all_indices(all_bands)
-            self.selected_indices(selected_bands)
+            self.set_selected_indices(selected_bands)
             oa, aa, k  = train_test_evaluator.evaluate_split(self.splits, self)
             self.reporter.report_epoch(epoch, mse_loss.item(), l1_loss.item(), lambda_value, loss.item(),oa,aa,k,selected_bands, mean_weight)
         print("Zhang - selected bands and weights:")

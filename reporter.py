@@ -24,7 +24,7 @@ class Reporter:
 
         if not os.path.exists(self.details_file):
             with open(self.details_file, 'w') as file:
-                file.write("dataset,target_size,fold,algorithm,time,oa,aa,k,selected_features\n")
+                file.write("dataset,target_size,algorithm,time,oa,aa,k,selected_features,fold\n")
 
         if not self.skip_all_bands:
             self.all_features_details_filename = f"all_features_details_{self.summary_filename}"
@@ -56,8 +56,8 @@ class Reporter:
         k = Reporter.sanitize_metric(metric.k)
         metric.selected_features = sorted(metric.selected_features)
         with open(self.details_file, 'a') as file:
-            file.write(f"{algorithm.splits.get_name()},{algorithm.target_size},{self.current_fold},{algorithm.get_name()},"
-                       f"{time},{oa},{aa},{k},{'-'.join([str(i) for i in metric.selected_features])}\n")
+            file.write(f"{algorithm.splits.get_name()},{algorithm.target_size},{algorithm.get_name()},"
+                       f"{time},{oa},{aa},{k},{'-'.join([str(i) for i in metric.selected_features])},{self.current_fold}\n")
         self.update_summary(algorithm)
 
     def update_summary(self, algorithm):
@@ -151,7 +151,7 @@ class Reporter:
                 weight_labels = ",".join(weight_labels)
                 file.write(f"epoch,mse_loss,l1_loss,lambda_value,loss,oa,aa,k,selected_bands,{weight_labels}\n")
         with open(self.current_epoch_report_file, 'a') as file:
-            weights = [str(i) for i in weight_labels]
+            weights = [str(i.item()) for i in mean_weight]
             weights = ",".join(weights)
             selected_bands_str = "-".join([str(i) for i in selected_bands])
             file.write(f"{epoch},{mse_loss},{l1_loss},{lambda_value},{loss},"
