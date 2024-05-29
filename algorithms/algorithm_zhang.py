@@ -12,12 +12,12 @@ class Algorithm_zhang(Algorithm):
     def __init__(self, target_size:int, splits:DataSplits, tag, reporter, verbose):
         super().__init__(target_size, splits, tag, reporter, verbose)
         self.criterion = torch.nn.CrossEntropyLoss()
-
-    def get_selected_indices(self):
         class_size = len(np.unique(self.splits.bs_train_y))
         last_layer_input = 100
-        zhangnet = ZhangNet(self.splits.bs_train_x.shape[1], class_size, last_layer_input).to(self.device)
-        optimizer = torch.optim.Adam(zhangnet.parameters(), lr=0.001, betas=(0.9,0.999))
+        self.zhangnet = ZhangNet(self.splits.bs_train_x.shape[1], class_size, last_layer_input).to(self.device)
+
+    def get_selected_indices(self):
+        optimizer = torch.optim.Adam(self.zhangnet.parameters(), lr=0.001, betas=(0.9,0.999))
         X_train = torch.tensor(self.splits.bs_train_x, dtype=torch.float32).to(self.device)
         y_train = torch.tensor(self.splits.bs_train_y, dtype=torch.int32).to(self.device)
         dataset = TensorDataset(X_train, y_train)
@@ -30,7 +30,7 @@ class Algorithm_zhang(Algorithm):
         for epoch in range(500):
             for batch_idx, (X, y) in enumerate(dataloader):
                 optimizer.zero_grad()
-                channel_weights, sparse_weights, y_hat = zhangnet(X)
+                channel_weights, sparse_weights, y_hat = self.zhangnet(X)
                 y = y.type(torch.LongTensor).to(self.device)
                 mse_loss = self.criterion(y_hat, y)
                 l1_loss = self.l1_loss(channel_weights)
@@ -48,7 +48,7 @@ class Algorithm_zhang(Algorithm):
         print("Zhang - selected bands and weights:")
         print("".join([str(i).ljust(10) for i in self.selected_indices]))
 
-        return zhangnet, self.selected_indices
+        return self.zhangnet, self.selected_indices
 
     def get_indices(self, channel_weights):
         mean_weight = torch.mean(channel_weights, dim=0)
