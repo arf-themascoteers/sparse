@@ -16,6 +16,7 @@ class Algorithm_zhang(Algorithm):
         last_layer_input = 100
         self.zhangnet = ZhangNet(self.splits.bs_train_x.shape[1], class_size, last_layer_input).to(self.device)
         self.total_epoch = 500
+        self.epoch = -1
 
     def get_selected_indices(self):
         optimizer = torch.optim.Adam(self.zhangnet.parameters(), lr=0.001, betas=(0.9,0.999))
@@ -29,6 +30,7 @@ class Algorithm_zhang(Algorithm):
         mse_loss = 0
 
         for epoch in range(self.total_epoch):
+            self.epoch = epoch
             for batch_idx, (X, y) in enumerate(dataloader):
                 optimizer.zero_grad()
                 channel_weights, sparse_weights, y_hat = self.zhangnet(X)
