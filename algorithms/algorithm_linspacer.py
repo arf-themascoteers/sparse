@@ -10,7 +10,7 @@ class Algorithm_linspacer(Algorithm):
         self.indices = None
 
     def get_selected_indices(self):
-        original_size = self.splits.bs_train_x.shape[1]
+        original_size = self.splits.train_x.shape[1]
         indices = linspacer.get_points(0, original_size-1, self.target_size,1)
         self.indices = torch.round(indices).long().tolist()
         return self, self.indices
