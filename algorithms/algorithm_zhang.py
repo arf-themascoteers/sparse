@@ -17,12 +17,14 @@ class Algorithm_zhang(Algorithm):
         self.zhangnet = ZhangNet(self.splits.train_x.shape[1], class_size, last_layer_input).to(self.device)
         self.total_epoch = 500
         self.epoch = -1
+        self.X_train = torch.tensor(self.splits.train_x, dtype=torch.float32).to(self.device)
+        self.y_train = torch.tensor(self.splits.train_y, dtype=torch.int32).to(self.device)
+        self.X_val = torch.tensor(self.splits.validation_x, dtype=torch.float32).to(self.device)
+        self.y_val = torch.tensor(self.splits.validation_y, dtype=torch.int32).to(self.device)
 
     def get_selected_indices(self):
         optimizer = torch.optim.Adam(self.zhangnet.parameters(), lr=0.001, betas=(0.9,0.999))
-        X_train = torch.tensor(self.splits.train_x, dtype=torch.float32).to(self.device)
-        y_train = torch.tensor(self.splits.train_y, dtype=torch.int32).to(self.device)
-        dataset = TensorDataset(X_train, y_train)
+        dataset = TensorDataset(self.X_train, self.y_train)
         dataloader = DataLoader(dataset, batch_size=128, shuffle=True)
         channel_weights = None
         loss = 0
@@ -51,19 +53,15 @@ class Algorithm_zhang(Algorithm):
         return self.zhangnet, self.selected_indices
 
     def report_stats(self, channel_weights, sparse_weights, epoch, mse_loss, l1_loss, lambda_value, loss):
-        X_train = torch.tensor(self.splits.train_x, dtype=torch.float32).to(self.device)
-        y_train = torch.tensor(self.splits.train_y, dtype=torch.int32).to(self.device)
-        _, _, y_hat = self.zhangnet(X_train)
+        _, _, y_hat = self.zhangnet(self.X_train)
         yp = torch.argmax(y_hat, dim=1)
-        yt = y_train.cpu().detach().numpy()
+        yt = self.y_train.cpu().detach().numpy()
         yh = yp.cpu().detach().numpy()
         t_oa, t_aa, t_k = train_test_evaluator.calculate_metrics(yt, yh)
 
-        X_val = torch.tensor(self.splits.validation_x, dtype=torch.float32).to(self.device)
-        y_val = torch.tensor(self.splits.validation_y, dtype=torch.int32).to(self.device)
-        _, _, y_hat = self.zhangnet(X_val)
+        _, _, y_hat = self.zhangnet(self.X_val)
         yp = torch.argmax(y_hat, dim=1)
-        yt = y_val.cpu().detach().numpy()
+        yt = self.y_val.cpu().detach().numpy()
         yh = yp.cpu().detach().numpy()
         v_oa, v_aa, v_k = train_test_evaluator.calculate_metrics(yt, yh)
 
@@ -85,7 +83,7 @@ class Algorithm_zhang(Algorithm):
         oa, aa, k = train_test_evaluator.evaluate_split(self.splits, self)
         means_sparse = torch.abs(torch.mean(sparse_weights, dim=0))
 
-        self.reporter.report_epoch(epoch, mse_loss.item(), l1_loss.item(), lambda_value, loss.item(),
+        self.reporter.report_epoch(epoch, mse_loss, l1_loss, lambda_value, loss,
                                    t_oa, t_aa, t_k,
                                    v_oa, v_aa, v_k,
                                    oa, aa, k,

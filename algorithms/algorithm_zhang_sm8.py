@@ -16,10 +16,12 @@ class Algorithm_zhang_sm8(Algorithm_zhang_fc_new_l1):
         ).to(self.device)
 
     def get_lambda(self, epoch):
+        return 0
         if epoch < 100:
             return 0.0
         else:
             return 0.1 * (epoch - 100) / (self.total_epoch - 100)
 
     def l1_loss(self, channel_weights):
+        return 0
         return torch.mean(torch.abs(channel_weights))

@@ -8,10 +8,10 @@ class Sparse8(nn.Module):
         self.parent = parent
 
     def forward(self, X):
+        return X
         if self.parent.epoch < 100:
             return X
         top = 0.1 * (self.parent.epoch - 100) / (self.parent.total_epoch - 100)
-        print(f"top ", top)
         X = torch.where(torch.abs(X) < top, 0, X)
         return X
 

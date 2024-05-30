@@ -143,7 +143,14 @@ class Reporter:
     def create_epoch_report(self, tag, algorithm, dataset, target_size):
         self.current_epoch_report_file = os.path.join("results", f"{tag}_{algorithm}_{dataset}_{target_size}_{self.current_fold}.csv")
 
-    def report_epoch(self, epoch, mse_loss, l1_loss, lambda_value, loss,t_oa,t_aa,t_k,oa,aa,k ,selected_bands, mean_weight):
+    def report_epoch(self, epoch, mse_loss, l1_loss, lambda_value, loss,
+                     t_oa,t_aa,t_k,
+                     v_oa,v_aa,v_k,
+                     oa,aa,k,
+                     min_cw, max_cw, avg_cw,
+                     min_s, max_s, avg_s,
+                     l0_cw, l0_s,
+                     selected_bands, mean_weight):
         if not os.path.exists(self.current_epoch_report_file):
             with open(self.current_epoch_report_file, 'w') as file:
                 weight_labels = list(range(len(mean_weight)))
@@ -167,4 +174,9 @@ class Reporter:
 
             file.write(f"{epoch},{mse_loss},{l1_loss},{lambda_value},{loss},"
                        f"{t_oa},{t_aa},{t_k},"
-                       f"{oa},{aa},{k},{selected_bands_str},{selected_weights_str},{weights}\n")
+                       f"{v_oa},{v_aa},{v_k},"                    
+                       f"{oa},{aa},{k},"
+                       f"{min_cw},{max_cw},{avg_cw},"
+                       f"{min_s},{max_s},{avg_s},"
+                       f"{l0_cw},{l0_s},"
+                       f"{selected_bands_str},{selected_weights_str},{weights}\n")
