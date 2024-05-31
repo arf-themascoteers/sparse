@@ -5,7 +5,7 @@ import torch.nn as nn
 from torch.utils.data import TensorDataset, DataLoader
 
 
-class Algorithm_zhang_fc_cw(Algorithm_zhang):
+class Algorithm_zhang_fc_avg_cw(Algorithm_zhang):
     def __init__(self, target_size:int, splits:DataSplits, tag, reporter, verbose):
         super().__init__(target_size, splits, tag, reporter, verbose)
         self.zhangnet.classnet = nn.Sequential(
