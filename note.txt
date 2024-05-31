@@ -1,0 +1,4 @@
+Deviation from real Zhang:
+
+1. k = 0.3
+2. Average absolute for L1
