@@ -43,7 +43,7 @@ class Algorithm_zhang(Algorithm):
                 loss = mse_loss + lambda_value*l1_loss
                 loss.backward()
                 optimizer.step()
-                if batch_idx == 0:
+                if batch_idx == 0 and self.epoch%10 == 0:
                     self.report_stats(channel_weights, sparse_weights, epoch, mse_loss, l1_loss, lambda_value, loss)
 
 

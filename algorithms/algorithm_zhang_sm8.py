@@ -14,6 +14,7 @@ class Algorithm_zhang_sm8(Algorithm_zhang_fc_new_l1):
             self.zhangnet.weighter[3],
             nn.BatchNorm1d(self.zhangnet.bands),
         ).to(self.device)
+        self.total_epoch = 150
 
     def get_lambda(self, epoch):
         return 0
