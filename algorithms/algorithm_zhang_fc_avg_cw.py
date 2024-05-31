@@ -39,7 +39,7 @@ class Algorithm_zhang_fc_avg_cw(Algorithm_zhang):
                 self.set_selected_indices(selected_bands)
 
                 if all_cws is None:
-                    all_cws = channel_weights
+                    all_cws = mean_weight
                 else:
                     all_cws = torch.cat((all_cws, mean_weight), 0)
 
