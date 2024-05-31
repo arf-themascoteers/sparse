@@ -17,20 +17,21 @@ class ZhangNetPar(nn.Module):
             nn.Sigmoid()
         )
         self.classnet1 = nn.Sequential(
-            nn.Linear(self.zhangnet.bands,128),
+            nn.Linear(self.bands,128),
             nn.LeakyReLU(),
             nn.Linear(128,128),
             nn.LeakyReLU(),
-            nn.Linear(128, self.zhangnet.number_of_classes)
-        ).to(self.device)
+            nn.Linear(128, self.number_of_classes)
+        )
         self.classnet2 = nn.Sequential(
-            nn.Linear(self.zhangnet.bands,128),
+            nn.Linear(self.bands,128),
             nn.LeakyReLU(),
             nn.Linear(128,128),
             nn.LeakyReLU(),
-            nn.Linear(128, self.zhangnet.number_of_classes)
-        ).to(self.device)
+            nn.Linear(128, self.number_of_classes)
+        )
         self.sparse = Sparse()
+        self.sparse.k = 0.8
         num_params = sum(p.numel() for p in self.parameters() if p.requires_grad)
         print("Number of learnable parameters:", num_params)
 
@@ -42,6 +43,7 @@ class ZhangNetPar(nn.Module):
         output1 = self.classnet1(cw_reweight_out)
         output2 = self.classnet2(sparse_reweight_out)
         return channel_weights, sparse_weights, output1, output2
+
 
 
 
