@@ -26,6 +26,8 @@ class Algorithm_zhang_fc_cw(Algorithm_zhang):
         l1_loss = 0
         mse_loss = 0
 
+        all_cws = None
+
         for epoch in range(self.total_epoch):
             self.epoch = epoch
             for batch_idx, (X, y) in enumerate(dataloader):
@@ -36,6 +38,11 @@ class Algorithm_zhang_fc_cw(Algorithm_zhang):
                 self.set_all_indices(all_bands)
                 self.set_selected_indices(selected_bands)
 
+                if all_cws is None:
+                    all_cws = channel_weights
+                else:
+                    all_cws = torch.cat((all_cws, mean_weight), 0)
+
                 y = y.type(torch.LongTensor).to(self.device)
                 mse_loss = self.criterion(y_hat, y)
                 l1_loss = self.l1_loss(channel_weights)
@@ -45,6 +52,11 @@ class Algorithm_zhang_fc_cw(Algorithm_zhang):
                     self.report_stats(channel_weights, sparse_weights, epoch, mse_loss, l1_loss, lambda_value, loss)
                 loss.backward()
                 optimizer.step()
+
+            mean_all_cws = torch.mean(all_cws, dim=0)
+            all_cws = None
+            self.all_indices = (torch.argsort(mean_all_cws, descending=True)).tolist()
+            self.selected_indices = self.all_indices[: self.target_size]
 
         print("Zhang - selected bands and weights:")
         print("".join([str(i).ljust(10) for i in self.selected_indices]))
