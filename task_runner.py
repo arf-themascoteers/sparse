@@ -26,6 +26,7 @@ class TaskRunner:
                 for fold, splits in enumerate(dataset.get_k_folds()):
                     self.reporter.increase_fold()
                     for algorithm in self.task["algorithms"]:
+                        print(algorithm)
                         algorithm_object = Algorithm.create(algorithm, target_size, splits, self.tag, self.reporter, self.verbose)
                         self.process_a_case(algorithm_object, fold)
 
@@ -43,9 +44,7 @@ class TaskRunner:
         metric = self.get_from_cache(algorithm, fold)
         if metric is not None:
             print(f"Selected features got from cache for {algorithm.splits.get_name()} for size {algorithm.target_size} for fold {fold} for {algorithm.get_name()}")
-            algorithm.set_selected_indices(metric.selected_features)
-            oa, aa, k = algorithm.compute_performance()
-            return Metrics(metric.time, oa, aa, k, metric.selected_features)
+            return metric
         print(f"Computing {algorithm.get_name()} {algorithm.splits.get_name()} Fold {fold}")
         metric = algorithm.compute_performance()
         self.save_to_cache(algorithm, fold, metric)
