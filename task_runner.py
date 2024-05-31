@@ -55,7 +55,8 @@ class TaskRunner:
         if not algorithm.is_cacheable():
             return
         self.cache.loc[len(self.cache)] = {
-            "dataset":algorithm.splits.get_name(), "algorithm": algorithm.get_name(),
+            "dataset":algorithm.splits.get_name(),
+            "algorithm": algorithm.get_name(),
             "fold": fold,
             "time":metric.time,"oa":metric.oa,"aa":metric.aa,"k":metric.k, "selected_features":algorithm.get_all_indices()
         }
