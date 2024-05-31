@@ -14,7 +14,7 @@ class Algorithm(ABC):
         self.tag = tag
         self.reporter = reporter
         self.verbose = verbose
-        self.selected_indices = []
+        self.selected_indices = None
         self.model = None
         self.all_indices = None
         self.reporter.create_epoch_report(tag, self.get_name(), self.splits.get_name(), self.target_size)
@@ -34,10 +34,11 @@ class Algorithm(ABC):
 
     def compute_performance(self):
         start_time = datetime.now()
-        selected_features = self.fit()
+        if self.selected_indices is None:
+            self.fit()
         elapsed_time = (datetime.now() - start_time).total_seconds()
         oa, aa, k = train_test_evaluator.evaluate_split(self.splits, self)
-        return Metrics(elapsed_time, oa, aa, k, selected_features)
+        return Metrics(elapsed_time, oa, aa, k, self.selected_indices)
 
     @abstractmethod
     def get_selected_indices(self):

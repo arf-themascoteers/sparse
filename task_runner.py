@@ -44,7 +44,8 @@ class TaskRunner:
         metric = self.get_from_cache(algorithm, fold)
         if metric is not None:
             print(f"Selected features got from cache for {algorithm.splits.get_name()} for size {algorithm.target_size} for fold {fold} for {algorithm.get_name()}")
-            return metric
+            algorithm.set_selected_indices(metric.selected_features)
+            return algorithm.compute_performance()
         print(f"Computing {algorithm.get_name()} {algorithm.splits.get_name()} Fold {fold}")
         metric = algorithm.compute_performance()
         self.save_to_cache(algorithm, fold, metric)

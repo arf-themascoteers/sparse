@@ -12,9 +12,9 @@ class Algorithm_zhang(Algorithm):
     def __init__(self, target_size:int, splits:DataSplits, tag, reporter, verbose):
         super().__init__(target_size, splits, tag, reporter, verbose)
         self.criterion = torch.nn.CrossEntropyLoss()
-        class_size = len(np.unique(self.splits.train_y))
-        last_layer_input = 100
-        self.zhangnet = ZhangNet(self.splits.train_x.shape[1], class_size, last_layer_input).to(self.device)
+        self.class_size = len(np.unique(self.splits.train_y))
+        self.last_layer_input = 100
+        self.zhangnet = ZhangNet(self.splits.train_x.shape[1], self.class_size, self.last_layer_input).to(self.device)
         self.total_epoch = 150
         self.epoch = -1
         self.X_train = torch.tensor(self.splits.train_x, dtype=torch.float32).to(self.device)
