@@ -8,7 +8,7 @@ class Sparse(nn.Module):
         self.criterion = torch.nn.MSELoss(reduction='sum')
 
     def forward(self, X):
-        k = 100/128
+        k = 0.3
         X = torch.where(X < k, 0, X)
         return X
 

@@ -99,9 +99,10 @@ class Algorithm_zhang(Algorithm):
         return mean_weight, band_indx, band_indx[: self.target_size]
 
     def l1_loss(self, channel_weights):
-        channel_weights = torch.sum(channel_weights, dim=1)
-        m = torch.mean(channel_weights)
-        return m
+        # channel_weights = torch.sum(channel_weights, dim=1)
+        # m = torch.mean(channel_weights)
+        # return m
+        return torch.mean(torch.abs(channel_weights))
 
     def get_lambda(self, epoch):
         return 0.0001 * math.exp(-epoch/self.total_epoch)
