@@ -51,3 +51,6 @@ def plot_oak(source):
     plt.savefig(dest)
     plt.close(fig)
 
+
+if __name__ == "__main__":
+    plot_oak("res.csv")
