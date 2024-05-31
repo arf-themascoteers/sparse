@@ -36,16 +36,20 @@ class Algorithm_zhang(Algorithm):
             for batch_idx, (X, y) in enumerate(dataloader):
                 optimizer.zero_grad()
                 channel_weights, sparse_weights, y_hat = self.zhangnet(X)
+
+                mean_weight, all_bands, selected_bands = self.get_indices(channel_weights)
+                self.set_all_indices(all_bands)
+                self.set_selected_indices(selected_bands)
+
                 y = y.type(torch.LongTensor).to(self.device)
                 mse_loss = self.criterion(y_hat, y)
                 l1_loss = self.l1_loss(channel_weights)
                 lambda_value = self.get_lambda(epoch+1)
                 loss = mse_loss + lambda_value*l1_loss
-                loss.backward()
-                optimizer.step()
                 if batch_idx == 0 and self.epoch%10 == 0:
                     self.report_stats(channel_weights, sparse_weights, epoch, mse_loss, l1_loss, lambda_value, loss)
-
+                loss.backward()
+                optimizer.step()
 
         print("Zhang - selected bands and weights:")
         print("".join([str(i).ljust(10) for i in self.selected_indices]))
@@ -78,8 +82,7 @@ class Algorithm_zhang(Algorithm):
         l0_s = torch.norm(means_sparse, p=0).item()
 
         mean_weight, all_bands, selected_bands = self.get_indices(channel_weights)
-        self.set_all_indices(all_bands)
-        self.set_selected_indices(selected_bands)
+
         oa, aa, k = train_test_evaluator.evaluate_split(self.splits, self)
         means_sparse = torch.abs(torch.mean(sparse_weights, dim=0))
 
