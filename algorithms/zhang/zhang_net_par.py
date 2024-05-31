@@ -31,7 +31,7 @@ class ZhangNetPar(nn.Module):
             nn.Linear(128, self.number_of_classes)
         )
         self.sparse = Sparse()
-        self.sparse.k = 0.82
+        self.sparse.k = 0.6
         num_params = sum(p.numel() for p in self.parameters() if p.requires_grad)
         print("Number of learnable parameters:", num_params)
 
