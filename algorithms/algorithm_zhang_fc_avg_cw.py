@@ -38,10 +38,11 @@ class Algorithm_zhang_fc_avg_cw(Algorithm_zhang):
                 self.set_all_indices(all_bands)
                 self.set_selected_indices(selected_bands)
 
+                r_mean_weight = mean_weight.reshape(1, -1)
                 if all_cws is None:
-                    all_cws = mean_weight
+                    all_cws = r_mean_weight
                 else:
-                    all_cws = torch.cat((all_cws, mean_weight), 0)
+                    all_cws = torch.cat((all_cws, r_mean_weight), dim=0)
 
                 y = y.type(torch.LongTensor).to(self.device)
                 mse_loss = self.criterion(y_hat, y)
