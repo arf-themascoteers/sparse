@@ -13,7 +13,7 @@ class ZhangNetMin(nn.Module):
             nn.Linear(self.bands, 100),
             nn.LeakyReLU(),
             nn.Linear(100, self.bands),
-            nn.Softmax()
+            nn.Softmax(dim=1)
         )
         self.classnet = nn.Sequential(
             nn.Linear(self.bands, 100),
