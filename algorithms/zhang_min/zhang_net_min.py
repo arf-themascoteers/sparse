@@ -26,7 +26,8 @@ class ZhangNetMin(nn.Module):
 
     def forward(self, X):
         channel_weights = self.weighter(X)
-        sparse_weights = self.sparse(channel_weights)
+        #sparse_weights = self.sparse(channel_weights)
+        sparse_weights = channel_weights
         reweight_out = X * sparse_weights
         output = self.classnet(reweight_out)
         return channel_weights, sparse_weights, output
