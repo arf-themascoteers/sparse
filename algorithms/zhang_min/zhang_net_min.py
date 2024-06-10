@@ -20,12 +20,14 @@ class ZhangNetMin(nn.Module):
             nn.LeakyReLU(),
             nn.Linear(100,self.number_of_classes)
         )
+        self.layer_norm = nn.LayerNorm(self.bands,elementwise_affine=True)
         self.sparse = SparseMin()
         num_params = sum(p.numel() for p in self.parameters() if p.requires_grad)
         print("Number of learnable parameters:", num_params)
 
     def forward(self, X):
         channel_weights = self.weighter(X)
+        channel_weights = self.layer_norm(channel_weights)
         #sparse_weights = self.sparse(channel_weights)
         sparse_weights = channel_weights
         reweight_out = X * sparse_weights

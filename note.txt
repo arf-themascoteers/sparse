@@ -1,5 +1,6 @@
-Deviation from real Zhang:
+alpha higher
 
-1. k = 0.3
-2. Average absolute for L1
-3. Epoch 150
+add l1, add sparse
+==========
+
+channelweights-square

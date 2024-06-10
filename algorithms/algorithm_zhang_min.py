@@ -14,7 +14,7 @@ class Algorithm_zhang_min(Algorithm):
         self.criterion = torch.nn.CrossEntropyLoss()
         self.class_size = len(np.unique(self.splits.train_y))
         self.zhangnet = ZhangNetMin(self.splits.train_x.shape[1], self.class_size).to(self.device)
-        self.total_epoch = 3000
+        self.total_epoch = 500
         self.epoch = -1
         self.X_train = torch.tensor(self.splits.train_x, dtype=torch.float32).to(self.device)
         self.y_train = torch.tensor(self.splits.train_y, dtype=torch.int32).to(self.device)
@@ -22,7 +22,7 @@ class Algorithm_zhang_min(Algorithm):
         self.y_val = torch.tensor(self.splits.validation_y, dtype=torch.int32).to(self.device)
 
     def get_selected_indices(self):
-        optimizer = torch.optim.Adam(self.zhangnet.parameters(), lr=0.0001, betas=(0.9,0.999))
+        optimizer = torch.optim.Adam(self.zhangnet.parameters(), lr=0.001, betas=(0.9,0.999))
         dataset = TensorDataset(self.X_train, self.y_train)
         dataloader = DataLoader(dataset, batch_size=128000, shuffle=True)
         channel_weights = None
@@ -44,7 +44,7 @@ class Algorithm_zhang_min(Algorithm):
                 mse_loss = self.criterion(y_hat, y)
                 l1_loss = self.l1_loss(channel_weights)
                 l2_loss = torch.mean(channel_weights*channel_weights)
-                alpha = 0.001
+                alpha = 0
                 lambda_value = self.get_lambda(epoch+1)
                 loss = mse_loss + lambda_value*l1_loss + alpha* (-l2_loss)
                 if batch_idx == 0 and self.epoch%10 == 0:
@@ -106,7 +106,7 @@ class Algorithm_zhang_min(Algorithm):
         return torch.mean(torch.abs(channel_weights))
 
     def get_lambda(self, epoch):
-        if epoch <= 300:
+        if epoch <= 100:
             return 0.0
         else:
             return 0.001 * (epoch - 100) / self.total_epoch
