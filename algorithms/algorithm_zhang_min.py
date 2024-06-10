@@ -43,10 +43,12 @@ class Algorithm_zhang_min(Algorithm):
                 y = y.type(torch.LongTensor).to(self.device)
                 mse_loss = self.criterion(y_hat, y)
                 l1_loss = self.l1_loss(channel_weights)
+                l2_loss = torch.norm(channel_weights, p=2)
+                alpha = 0.001
                 lambda_value = self.get_lambda(epoch+1)
-                loss = mse_loss + lambda_value*l1_loss
+                loss = mse_loss + lambda_value*l1_loss + alpha* (-l2_loss)
                 if batch_idx == 0 and self.epoch%10 == 0:
-                    self.report_stats(channel_weights, sparse_weights, epoch, mse_loss, l1_loss, lambda_value, loss)
+                    self.report_stats(channel_weights, sparse_weights, epoch, mse_loss, l1_loss, lambda_value, l2_loss, alpha, loss)
                 loss.backward()
                 optimizer.step()
 
@@ -55,7 +57,7 @@ class Algorithm_zhang_min(Algorithm):
 
         return self.zhangnet, self.selected_indices
 
-    def report_stats(self, channel_weights, sparse_weights, epoch, mse_loss, l1_loss, lambda_value, loss):
+    def report_stats(self, channel_weights, sparse_weights, epoch, mse_loss, l1_loss, lambda_value, l2_loss, alpha, loss):
         _, _, y_hat = self.zhangnet(self.X_train)
         yp = torch.argmax(y_hat, dim=1)
         yt = self.y_train.cpu().detach().numpy()
@@ -85,7 +87,7 @@ class Algorithm_zhang_min(Algorithm):
         oa, aa, k = train_test_evaluator.evaluate_split(self.splits, self)
         means_sparse = torch.abs(torch.mean(sparse_weights, dim=0))
 
-        self.reporter.report_epoch(epoch, mse_loss, l1_loss, lambda_value, loss,
+        self.reporter.report_epoch(epoch, mse_loss, l1_loss, lambda_value, l2_loss, alpha, loss,
                                    t_oa, t_aa, t_k,
                                    v_oa, v_aa, v_k,
                                    oa, aa, k,

@@ -143,7 +143,7 @@ class Reporter:
     def create_epoch_report(self, tag, algorithm, dataset, target_size):
         self.current_epoch_report_file = os.path.join("results", f"{tag}_{algorithm}_{dataset}_{target_size}_{self.current_fold}.csv")
 
-    def report_epoch(self, epoch, mse_loss, l1_loss, lambda_value, loss,
+    def report_epoch(self, epoch, mse_loss, l1_loss, lambda_value, l2_loss, alpha, loss,
                      t_oa,t_aa,t_k,
                      v_oa,v_aa,v_k,
                      oa,aa,k,
@@ -156,7 +156,7 @@ class Reporter:
                 weight_labels = list(range(len(mean_weight)))
                 weight_labels = [f"weight_{i}" for i in weight_labels]
                 weight_labels = ",".join(weight_labels)
-                file.write(f"epoch,mse_loss,l1_loss,lambda_value,loss,"
+                file.write(f"epoch,mse_loss,l1_loss,lambda_value,l2_loss,alpha,loss,"
                            f"t_oa,t_aa,t_k,"
                            f"v_oa,v_aa,v_k,"
                            f"oa,aa,k,"
@@ -172,7 +172,7 @@ class Reporter:
             selected_weights = [str(i.item()) for i in mean_weight[selected_bands]]
             selected_weights_str = "-".join(selected_weights)
 
-            file.write(f"{epoch},{mse_loss},{l1_loss},{lambda_value},{loss},"
+            file.write(f"{epoch},{mse_loss},{l1_loss},{lambda_value},{l2_loss},{alpha},{loss},"
                        f"{t_oa},{t_aa},{t_k},"
                        f"{v_oa},{v_aa},{v_k},"                    
                        f"{oa},{aa},{k},"
