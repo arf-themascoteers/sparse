@@ -8,7 +8,7 @@ import importlib
 
 
 class Algorithm(ABC):
-    def __init__(self, target_size:int, splits:DataSplits, tag, reporter, verbose):
+    def __init__(self, target_size:int, splits:DataSplits, tag, reporter, verbose, fold):
         self.target_size = target_size
         self.splits = splits
         self.tag = tag
@@ -17,7 +17,7 @@ class Algorithm(ABC):
         self.selected_indices = None
         self.model = None
         self.all_indices = None
-        self.reporter.create_epoch_report(tag, self.get_name(), self.splits.get_name(), self.target_size)
+        self.reporter.create_epoch_report(tag, self.get_name(), self.splits.get_name(), self.target_size, fold)
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
     def fit(self):
@@ -62,8 +62,8 @@ class Algorithm(ABC):
         return True
 
     @staticmethod
-    def create(name, target_size, splits, tag, reporter, verbose):
+    def create(name, target_size, splits, tag, reporter, verbose, fold):
         class_name = f"Algorithm_{name}"
         module = importlib.import_module(f"algorithms.algorithm_{name}")
         clazz = getattr(module, class_name)
-        return clazz(target_size, splits, tag, reporter, verbose)
+        return clazz(target_size, splits, tag, reporter, verbose, fold)

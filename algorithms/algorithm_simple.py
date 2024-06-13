@@ -54,8 +54,8 @@ class ZhangNet(nn.Module):
 
 
 class Algorithm_simple(Algorithm):
-    def __init__(self, target_size:int, splits:DataSplits, tag, reporter, verbose):
-        super().__init__(target_size, splits, tag, reporter, verbose)
+    def __init__(self, target_size:int, splits:DataSplits, tag, reporter, verbose, fold):
+        super().__init__(target_size, splits, tag, reporter, verbose, fold)
         self.criterion = torch.nn.CrossEntropyLoss()
         self.class_size = len(np.unique(self.splits.train_y))
         self.zhangnet = ZhangNet(self.splits.train_x.shape[1], self.class_size).to(self.device)

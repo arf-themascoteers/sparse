@@ -40,9 +40,6 @@ class Reporter:
                 with open(self.all_features_details_file, 'w') as file:
                     file.write("fold,dataset,oa,aa,k\n")
 
-    def increase_fold(self):
-        self.current_fold += 1
-
     def get_summary(self):
         return self.summary_file
 
@@ -140,7 +137,8 @@ class Reporter:
     def sanitize_metric(metric):
         return max(metric, 0)
 
-    def create_epoch_report(self, tag, algorithm, dataset, target_size):
+    def create_epoch_report(self, tag, algorithm, dataset, target_size, fold):
+        self.current_fold = fold
         self.current_epoch_report_file = os.path.join("results", f"{tag}_{algorithm}_{dataset}_{target_size}_{self.current_fold}.csv")
 
     def report_epoch(self, epoch, mse_loss, l1_loss, lambda_value, l2_loss, alpha, loss,
@@ -180,3 +178,4 @@ class Reporter:
                        f"{min_s},{max_s},{avg_s},"
                        f"{l0_cw},{l0_s},"
                        f"{selected_bands_str},{selected_weights_str},{weights}\n")
+

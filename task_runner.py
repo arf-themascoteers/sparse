@@ -24,10 +24,9 @@ class TaskRunner:
                 self.evaluate_for_all_features(dataset)
             for target_size in self.task["target_sizes"]:
                 for fold, splits in enumerate(dataset.get_k_folds()):
-                    self.reporter.increase_fold()
                     for algorithm in self.task["algorithms"]:
                         print(algorithm)
-                        algorithm_object = Algorithm.create(algorithm, target_size, splits, self.tag, self.reporter, self.verbose)
+                        algorithm_object = Algorithm.create(algorithm, target_size, splits, self.tag, self.reporter, self.verbose, fold)
                         self.process_a_case(algorithm_object, fold)
 
         return self.reporter.get_summary(), self.reporter.get_details()

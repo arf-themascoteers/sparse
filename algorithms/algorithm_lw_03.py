@@ -9,28 +9,40 @@ import train_test_evaluator
 
 
 class Sparse(nn.Module):
-    def __init__(self):
+    def __init__(self, target_size):
         super().__init__()
-        self.k = 0.3
+        self.target_size = target_size
+        self.k = self.determine_value(self.target_size)
+        print("*************VALUE of k************")
+        print(self.k)
 
     def forward(self, X):
         X = torch.where(X < self.k, 0, X)
         return X
 
+    def determine_value(self, size):
+        if size <= 5:
+            return 0.3
+        elif size >= 30:
+            return 0.1
+        else:
+            return 0.3 - ((size - 5) / 25) * 0.2
+
 
 class ZhangNet(nn.Module):
-    def __init__(self, bands, number_of_classes):
+    def __init__(self, bands, number_of_classes, target_size):
         super().__init__()
         torch.manual_seed(3)
         self.bands = bands
         self.number_of_classes = number_of_classes
+        self.target_size = target_size
         self.weighter = nn.Parameter(torch.ones(self.bands)/2, requires_grad=True)
         self.classnet = nn.Sequential(
             nn.Linear(self.bands, 100),
             nn.LeakyReLU(),
             nn.Linear(100,self.number_of_classes)
         )
-        self.sparse = Sparse()
+        self.sparse = Sparse(self.target_size)
         num_params = sum(p.numel() for p in self.parameters() if p.requires_grad)
         print("Number of learnable parameters:", num_params)
 
@@ -42,11 +54,11 @@ class ZhangNet(nn.Module):
 
 
 class Algorithm_lw_03(Algorithm):
-    def __init__(self, target_size:int, splits:DataSplits, tag, reporter, verbose):
-        super().__init__(target_size, splits, tag, reporter, verbose)
+    def __init__(self, target_size:int, splits:DataSplits, tag, reporter, verbose, fold):
+        super().__init__(target_size, splits, tag, reporter, verbose, fold)
         self.criterion = torch.nn.CrossEntropyLoss()
         self.class_size = len(np.unique(self.splits.train_y))
-        self.zhangnet = ZhangNet(self.splits.train_x.shape[1], self.class_size).to(self.device)
+        self.zhangnet = ZhangNet(self.splits.train_x.shape[1], self.class_size, self.target_size).to(self.device)
         self.total_epoch = 1600
         self.epoch = -1
         self.X_train = torch.tensor(self.splits.train_x, dtype=torch.float32).to(self.device)
@@ -146,6 +158,6 @@ class Algorithm_lw_03(Algorithm):
             return 0.1
             #return 0.001 * (epoch - start) / self.total_epoch
 
-
-
+    def is_cacheable(self):
+        return False
 
