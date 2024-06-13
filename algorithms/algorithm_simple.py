@@ -53,7 +53,7 @@ class ZhangNet(nn.Module):
         return channel_weights, sparse_weights, output
 
 
-class Algorithm_zhang_min(Algorithm):
+class Algorithm_simple(Algorithm):
     def __init__(self, target_size:int, splits:DataSplits, tag, reporter, verbose):
         super().__init__(target_size, splits, tag, reporter, verbose)
         self.criterion = torch.nn.CrossEntropyLoss()
