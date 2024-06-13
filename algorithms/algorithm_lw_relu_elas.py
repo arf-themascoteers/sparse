@@ -145,5 +145,3 @@ class Algorithm_lw_relu_elas(Algorithm):
             return 0.1
             #return 0.001 * (epoch - start) / self.total_epoch
 
-    def is_cacheable(self):
-        return False
