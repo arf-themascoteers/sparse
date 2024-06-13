@@ -1,8 +1,4 @@
-alpha higher
-
-add l1, add sparse
-==========
-
-==
-before that - bn?
-
+lw
+-relu (optional - remove abs)
+-sigmoid (optional - remove abs)
+-l1
