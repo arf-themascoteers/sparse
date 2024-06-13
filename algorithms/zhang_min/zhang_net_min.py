@@ -13,7 +13,8 @@ class ZhangNetMin(nn.Module):
             nn.Linear(self.bands, 100),
             nn.LeakyReLU(),
             nn.Linear(100, self.bands),
-            nn.Softmax(dim=1)
+            nn.ReLU()
+            #nn.Softmax(dim=1)
         )
         self.classnet = nn.Sequential(
             nn.Linear(self.bands, 100),
@@ -27,7 +28,8 @@ class ZhangNetMin(nn.Module):
 
     def forward(self, X):
         channel_weights = self.weighter(X)
-        channel_weights = self.layer_norm(channel_weights)
+        #channel_weights = self.layer_norm(channel_weights)
+        #channel_weights = channel_weights*channel_weights
         #sparse_weights = self.sparse(channel_weights)
         sparse_weights = channel_weights
         reweight_out = X * sparse_weights

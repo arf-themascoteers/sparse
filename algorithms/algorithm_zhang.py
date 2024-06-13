@@ -15,7 +15,7 @@ class Algorithm_zhang(Algorithm):
         self.class_size = len(np.unique(self.splits.train_y))
         self.last_layer_input = 100
         self.zhangnet = ZhangNet(self.splits.train_x.shape[1], self.class_size, self.last_layer_input).to(self.device)
-        self.total_epoch = 150
+        self.total_epoch = 400
         self.epoch = -1
         self.X_train = torch.tensor(self.splits.train_x, dtype=torch.float32).to(self.device)
         self.y_train = torch.tensor(self.splits.train_y, dtype=torch.int32).to(self.device)
@@ -86,7 +86,7 @@ class Algorithm_zhang(Algorithm):
         oa, aa, k = train_test_evaluator.evaluate_split(self.splits, self)
         means_sparse = torch.abs(torch.mean(sparse_weights, dim=0))
 
-        self.reporter.report_epoch(epoch, mse_loss, l1_loss, lambda_value, loss,
+        self.reporter.report_epoch(epoch, mse_loss, l1_loss, lambda_value, 0,0,loss,
                                    t_oa, t_aa, t_k,
                                    v_oa, v_aa, v_k,
                                    oa, aa, k,
@@ -102,10 +102,10 @@ class Algorithm_zhang(Algorithm):
         return mean_weight, band_indx, band_indx[: self.target_size]
 
     def l1_loss(self, channel_weights):
-        # channel_weights = torch.sum(channel_weights, dim=1)
-        # m = torch.mean(channel_weights)
-        # return m
-        return torch.mean(torch.abs(channel_weights))
+        channel_weights = torch.sum(channel_weights, dim=1)
+        m = torch.mean(channel_weights)
+        return m
+        #return torch.mean(torch.abs(channel_weights))
 
     def get_lambda(self, epoch):
         return 0.0001 * math.exp(-epoch/self.total_epoch)

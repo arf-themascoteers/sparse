@@ -3,4 +3,6 @@ alpha higher
 add l1, add sparse
 ==========
 
-channelweights-square
+==
+before that - bn?
+

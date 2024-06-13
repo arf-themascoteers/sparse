@@ -14,7 +14,7 @@ class Algorithm_zhang_min(Algorithm):
         self.criterion = torch.nn.CrossEntropyLoss()
         self.class_size = len(np.unique(self.splits.train_y))
         self.zhangnet = ZhangNetMin(self.splits.train_x.shape[1], self.class_size).to(self.device)
-        self.total_epoch = 500
+        self.total_epoch = 400
         self.epoch = -1
         self.X_train = torch.tensor(self.splits.train_x, dtype=torch.float32).to(self.device)
         self.y_train = torch.tensor(self.splits.train_y, dtype=torch.int32).to(self.device)
@@ -106,10 +106,11 @@ class Algorithm_zhang_min(Algorithm):
         return torch.mean(torch.abs(channel_weights))
 
     def get_lambda(self, epoch):
-        if epoch <= 100:
+        start = 1000
+        if epoch < 0:
             return 0.0
         else:
-            return 0.001 * (epoch - 100) / self.total_epoch
+            return 0.001 * (epoch - start) / self.total_epoch
 
 
 
