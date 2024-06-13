@@ -57,7 +57,7 @@ class Reporter:
         metric.selected_features = sorted(metric.selected_features)
         with open(self.details_file, 'a') as file:
             file.write(f"{algorithm.splits.get_name()},{algorithm.target_size},{algorithm.get_name()},"
-                       f"{time},{oa},{aa},{k},{'-'.join([str(i) for i in metric.selected_features])},{self.current_fold}\n")
+                       f"{time},{oa},{aa},{k},{'$'.join([str(i) for i in metric.selected_features])},{self.current_fold}\n")
         self.update_summary(algorithm)
 
     def update_summary(self, algorithm):
@@ -167,10 +167,10 @@ class Reporter:
         with open(self.current_epoch_report_file, 'a') as file:
             weights = [str(i.item()) for i in mean_weight]
             weights = ",".join(weights)
-            selected_bands_str = "-".join([str(i) for i in selected_bands])
+            selected_bands_str = '$'.join([str(i) for i in selected_bands])
 
             selected_weights = [str(i.item()) for i in mean_weight[selected_bands]]
-            selected_weights_str = "-".join(selected_weights)
+            selected_weights_str = '$'.join(selected_weights)
 
             file.write(f"{epoch},{mse_loss},{l1_loss},{lambda_value},{l2_loss},{alpha},{loss},"
                        f"{t_oa},{t_aa},{t_k},"

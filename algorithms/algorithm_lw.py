@@ -102,22 +102,26 @@ class Algorithm_lw(Algorithm):
         yh = yp.cpu().detach().numpy()
         v_oa, v_aa, v_k = train_test_evaluator.calculate_metrics(yt, yh)
 
-        mean_weight = torch.mean(torch.abs(channel_weights), dim=0)
-        means_sparse = torch.mean(torch.abs(sparse_weights), dim=0)
-        min_cw = torch.min(mean_weight).item()
-        min_s = torch.min(means_sparse).item()
-        max_cw = torch.max(mean_weight).item()
-        max_s = torch.max(means_sparse).item()
-        avg_cw = torch.mean(mean_weight).item()
-        avg_s = torch.mean(means_sparse).item()
+        mean_weight = channel_weights
+        mean_sparse = sparse_weights
 
-        l0_cw = torch.norm(mean_weight, p=0).item()
-        l0_s = torch.norm(means_sparse, p=0).item()
+        abs_mean_weight = torch.abs(mean_weight)
+        abs_mean_sparse = torch.abs(mean_sparse)
+
+        min_cw = torch.min(abs_mean_weight).item()
+        min_s = torch.min(abs_mean_sparse).item()
+        max_cw = torch.max(abs_mean_weight).item()
+        max_s = torch.max(abs_mean_sparse).item()
+        avg_cw = torch.mean(abs_mean_weight).item()
+        avg_s = torch.mean(abs_mean_sparse).item()
+
+        l0_cw = torch.norm(abs_mean_weight, p=0).item()
+        l0_s = torch.norm(abs_mean_sparse, p=0).item()
 
         mean_weight, all_bands, selected_bands = self.get_indices(channel_weights)
 
         oa, aa, k = train_test_evaluator.evaluate_split(self.splits, self)
-        means_sparse = torch.abs(torch.mean(sparse_weights, dim=0))
+        means_sparse = sparse_weights
 
         self.reporter.report_epoch(epoch, mse_loss, l1_loss, lambda_value, l2_loss, alpha, loss,
                                    t_oa, t_aa, t_k,
