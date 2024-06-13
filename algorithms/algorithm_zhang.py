@@ -11,7 +11,7 @@ import train_test_evaluator
 class Sparse(nn.Module):
     def __init__(self):
         super().__init__()
-        self.k = 100/128
+        self.k = 0.3
 
     def forward(self, X):
         X = torch.where(X < self.k, 0, X)
@@ -66,7 +66,7 @@ class Algorithm_zhang(Algorithm):
         self.class_size = len(np.unique(self.splits.train_y))
         self.last_layer_input = 100
         self.zhangnet = ZhangNet(self.splits.train_x.shape[1], self.class_size, self.last_layer_input).to(self.device)
-        self.total_epoch = 400
+        self.total_epoch = 500
         self.epoch = -1
         self.X_train = torch.tensor(self.splits.train_x, dtype=torch.float32).to(self.device)
         self.y_train = torch.tensor(self.splits.train_y, dtype=torch.int32).to(self.device)
