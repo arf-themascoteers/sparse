@@ -83,12 +83,12 @@ class Reporter:
             df2.loc[mask, 'selected_features'] = selected_features
         df2.to_csv(self.summary_file, index=False)
 
-    def write_details_all_features(self, dataset, oa, aa, k):
+    def write_details_all_features(self, fold, dataset, oa, aa, k):
         oa = Reporter.sanitize_metric(oa)
         aa = Reporter.sanitize_metric(aa)
         k = Reporter.sanitize_metric(k)
         with open(self.all_features_details_file, 'a') as file:
-            file.write(f"{self.current_fold},{dataset},{oa},{aa},{k}\n")
+            file.write(f"{fold},{dataset},{oa},{aa},{k}\n")
         self.update_summary_for_all_features(dataset)
 
     def update_summary_for_all_features(self, dataset):

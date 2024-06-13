@@ -86,4 +86,4 @@ class TaskRunner:
             print(f"Fold {fold} for {splits.get_name()} was done")
             return
         oa, aa, k = train_test_evaluator.evaluate_split(splits)
-        self.reporter.write_details_all_features(splits.get_name(), oa, aa, k)
+        self.reporter.write_details_all_features(fold, splits.get_name(), oa, aa, k)
