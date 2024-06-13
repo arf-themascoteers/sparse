@@ -1,11 +1,56 @@
 from algorithm import Algorithm
 import torch
+import torch.nn as nn
 from torch.utils.data import TensorDataset, DataLoader
-from algorithms.zhang_min.zhang_net_min import ZhangNetMin
 import numpy as np
 import math
 from data_splits import DataSplits
 import train_test_evaluator
+
+
+class Sparse(nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.criterion = torch.nn.MSELoss(reduction='sum')
+        self.k = 0
+
+    def forward(self, X):
+        X = torch.where(X < self.k, 0, X)
+        return X
+
+
+class ZhangNet(nn.Module):
+    def __init__(self, bands, number_of_classes):
+        super().__init__()
+        torch.manual_seed(3)
+        self.bands = bands
+        self.number_of_classes = number_of_classes
+        self.weighter = nn.Sequential(
+            nn.Linear(self.bands, 100),
+            nn.LeakyReLU(),
+            nn.Linear(100, self.bands),
+            nn.ReLU()
+            #nn.Softmax(dim=1)
+        )
+        self.classnet = nn.Sequential(
+            nn.Linear(self.bands, 100),
+            nn.LeakyReLU(),
+            nn.Linear(100,self.number_of_classes)
+        )
+        self.layer_norm = nn.LayerNorm(self.bands,elementwise_affine=True)
+        self.sparse = Sparse()
+        num_params = sum(p.numel() for p in self.parameters() if p.requires_grad)
+        print("Number of learnable parameters:", num_params)
+
+    def forward(self, X):
+        channel_weights = self.weighter(X)
+        #channel_weights = self.layer_norm(channel_weights)
+        #channel_weights = channel_weights*channel_weights
+        #sparse_weights = self.sparse(channel_weights)
+        sparse_weights = channel_weights
+        reweight_out = X * sparse_weights
+        output = self.classnet(reweight_out)
+        return channel_weights, sparse_weights, output
 
 
 class Algorithm_zhang_min(Algorithm):
@@ -13,7 +58,7 @@ class Algorithm_zhang_min(Algorithm):
         super().__init__(target_size, splits, tag, reporter, verbose)
         self.criterion = torch.nn.CrossEntropyLoss()
         self.class_size = len(np.unique(self.splits.train_y))
-        self.zhangnet = ZhangNetMin(self.splits.train_x.shape[1], self.class_size).to(self.device)
+        self.zhangnet = ZhangNet(self.splits.train_x.shape[1], self.class_size).to(self.device)
         self.total_epoch = 400
         self.epoch = -1
         self.X_train = torch.tensor(self.splits.train_x, dtype=torch.float32).to(self.device)
