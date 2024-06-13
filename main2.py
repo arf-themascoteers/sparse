@@ -2,9 +2,9 @@ from task_runner import TaskRunner
 import oak_plotter
 
 if __name__ == '__main__':
-    tag = "lw_relu_custom"
+    tag = "attn"
     tasks = {
-        "algorithms" : ["lw_relu_custom"],
+        "algorithms" : ["attn"],
         "datasets" : ["indian_pines"],
         "target_sizes" : [5, 10, 15, 20, 25, 30]
     }
