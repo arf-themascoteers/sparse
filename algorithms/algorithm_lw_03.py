@@ -11,8 +11,7 @@ import train_test_evaluator
 class Sparse(nn.Module):
     def __init__(self):
         super().__init__()
-        self.criterion = torch.nn.MSELoss(reduction='sum')
-        self.k = 0
+        self.k = 0.3
 
     def forward(self, X):
         X = torch.where(X < self.k, 0, X)
@@ -31,16 +30,18 @@ class ZhangNet(nn.Module):
             nn.LeakyReLU(),
             nn.Linear(100,self.number_of_classes)
         )
+        self.sparse = Sparse()
         num_params = sum(p.numel() for p in self.parameters() if p.requires_grad)
         print("Number of learnable parameters:", num_params)
 
     def forward(self, X):
-        reweight_out = self.weighter * X
+        sparse_weights = self.sparse(self.weighter)
+        reweight_out = sparse_weights * X
         output = self.classnet(reweight_out)
-        return self.weighter, self.weighter, output
+        return self.weighter, sparse_weights, output
 
 
-class Algorithm_lw(Algorithm):
+class Algorithm_lw_03(Algorithm):
     def __init__(self, target_size:int, splits:DataSplits, tag, reporter, verbose):
         super().__init__(target_size, splits, tag, reporter, verbose)
         self.criterion = torch.nn.CrossEntropyLoss()
