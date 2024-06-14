@@ -3,6 +3,14 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import os
 
+ALGS = {
+    "zhang" : "BS-Net-Classifier",
+    "lw_relu" : "Proposed Algorithm"
+}
+
+DSS = {
+    "indian_pines" : "Indian Pines"
+}
 
 def plot_oak(source):
     os.makedirs("saved_figs", exist_ok=True)
@@ -19,17 +27,23 @@ def plot_oak(source):
     algorithms = df["algorithm"].unique()
     datasets = df["dataset"].unique()
 
-    fig, axes = plt.subplots(nrows=3, ncols=len(datasets), figsize=(15, 10))
+    fig, axes = plt.subplots(nrows=3, ncols=len(datasets), figsize=(15, 15))
     axes = np.reshape(axes, (3, -1))
 
     for metric_index,metric in enumerate(["oa", "aa", "k"]):
         for ds_index, dataset in enumerate(datasets):
+            dataset_label = dataset
+            if dataset in DSS:
+                dataset_label = DSS[dataset]
             dataset_df = df[df["dataset"] == dataset].copy()
             for algorithm_index, algorithm in enumerate(algorithms):
+                algorithm_label = algorithm
+                if algorithm in ALGS:
+                    algorithm_label = ALGS[algorithm]
                 alg_df = dataset_df[dataset_df["algorithm"] == algorithm]
                 alg_df = alg_df.sort_values(by='target_size')
                 axes[metric_index, ds_index].plot(alg_df['target_size'], alg_df[metric],
-                        label=algorithm, marker=markers[algorithm_index], color=colors[algorithm_index],
+                        label=algorithm_label, marker=markers[algorithm_index], color=colors[algorithm_index],
                         fillstyle='none', markersize=10, linewidth=2
                         )
 
@@ -38,13 +52,14 @@ def plot_oak(source):
             axes[metric_index, ds_index].set_ylim(min_lim, max_lim)
             axes[metric_index, ds_index].tick_params(axis='both', which='major', labelsize=14)
             if ds_index == len(datasets)-1 and metric_index == 0:
-                legend = axes[metric_index, ds_index].legend(title="Algorithms", loc='upper left', fontsize=18,bbox_to_anchor=(1.05, 1))
+                legend = axes[metric_index, ds_index].legend(title="Algorithms", loc='upper left', fontsize=18,
+                                                             bbox_to_anchor=(0, 1.6), ncols=2)
                 legend.get_title().set_fontsize('18')
                 legend.get_title().set_fontweight('bold')
 
             axes[metric_index, ds_index].grid(True, linestyle='--', alpha=0.6)
             if metric_index == 0:
-                axes[metric_index, ds_index].set_title(f"{dataset}", fontsize=22, pad=20)
+                axes[metric_index, ds_index].set_title(f"{dataset_label}", fontsize=22, pad=20)
 
     plt.tight_layout()
     fig.subplots_adjust(wspace=0.5)
@@ -53,4 +68,4 @@ def plot_oak(source):
 
 
 if __name__ == "__main__":
-    plot_oak("res.csv")
+    plot_oak("summary_f1_2.csv")
