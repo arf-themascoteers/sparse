@@ -22,9 +22,9 @@ class TaskRunner:
             dataset = DSManager(name=dataset_name, folds=self.folds)
             if not self.skip_all_bands:
                 self.evaluate_for_all_features(dataset)
-            for target_size in self.task["target_sizes"]:
-                for fold, splits in enumerate(dataset.get_k_folds()):
-                    for algorithm in self.task["algorithms"]:
+            for fold, splits in enumerate(dataset.get_k_folds()):
+                for algorithm in self.task["algorithms"]:
+                    for target_size in self.task["target_sizes"]:
                         print(algorithm)
                         algorithm_object = Algorithm.create(algorithm, target_size, splits, self.tag, self.reporter, self.verbose, fold)
                         self.process_a_case(algorithm_object, fold)
