@@ -42,9 +42,9 @@ class DSManager:
 
     def get_all_set_X_y_from_data(self, seed):
         data = self._shuffle(seed)
-        train_validation, evaluation = train_test_split(data, test_size=0.5, random_state=seed)
+        train_validation, evaluation = train_test_split(data, test_size=0.7, random_state=seed)
         train, validation = train_test_split(train_validation, test_size=0.1, random_state=seed)
-        evaluation_train, evaluation_test = train_test_split(train_validation, test_size=0.5, random_state=seed)
+        evaluation_train, evaluation_test = train_test_split(train_validation, test_size=0.2, random_state=seed)
         return DataSplits(self.name, *DSManager.get_X_y_from_data(train),
                           *DSManager.get_X_y_from_data(validation),
                           *DSManager.get_X_y_from_data(evaluation_train),
